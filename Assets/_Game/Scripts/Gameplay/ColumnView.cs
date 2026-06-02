@@ -45,6 +45,29 @@ public class ColumnView : MonoBehaviour
         return !hasAcceptedColor || acceptedColor == colorId;
     }
 
+    public bool ContainsBlock(BlockView targetBlock)
+    {
+        return blocks.Contains(targetBlock);
+    }
+
+    public bool CanAcceptAll(IReadOnlyList<BlockView> targetBlocks)
+    {
+        for (int i = 0; i < targetBlocks.Count; i++)
+        {
+            if (!CanAccept(targetBlocks[i].ColorId))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public List<BlockView> SnapshotBlocks()
+    {
+        return new List<BlockView>(blocks);
+    }
+
     public BlockView PushFromTray(BlockView incomingBlock)
     {
         BlockView outgoingBlock = blocks[blocks.Count - 1];
@@ -58,6 +81,55 @@ public class ColumnView : MonoBehaviour
         SnapBlocksToSlots();
 
         return outgoingBlock;
+    }
+
+    public Sequence ReplaceBlocksAnimated(List<BlockView> newBlocks, float duration)
+    {
+        blocks.Clear();
+        blocks.AddRange(newBlocks);
+
+        Sequence sequence = DOTween.Sequence();
+        for (int i = 0; i < blocks.Count; i++)
+        {
+            BlockView block = blocks[i];
+            Transform targetSlot = slots[i];
+            block.transform.SetParent(targetSlot, true);
+            block.SetSortingOrder(20);
+            sequence.Join(block.transform.DOMove(targetSlot.position, duration).SetEase(Ease.InOutQuad));
+        }
+
+        sequence.AppendCallback(() =>
+        {
+            for (int i = 0; i < blocks.Count; i++)
+            {
+                blocks[i].SetSortingOrder(10);
+            }
+
+            SnapBlocksToSlots();
+        });
+
+        return sequence;
+    }
+
+    public Sequence SetMagnetRaised(bool raised, float offset, float duration)
+    {
+        Sequence sequence = DOTween.Sequence();
+        float targetLocalY = raised ? offset : 0f;
+        int sortingOrder = raised ? 45 : 10;
+
+        for (int i = 0; i < blocks.Count; i++)
+        {
+            BlockView block = blocks[i];
+            block.SetSortingOrder(sortingOrder);
+            sequence.Join(block.transform.DOLocalMoveY(targetLocalY, duration).SetEase(Ease.OutQuad));
+        }
+
+        if (!raised)
+        {
+            sequence.AppendCallback(SnapBlocksToSlots);
+        }
+
+        return sequence;
     }
 
     public Sequence PushFromTrayAnimated(
@@ -106,6 +178,55 @@ public class ColumnView : MonoBehaviour
             outgoingBlock.transform.SetParent(traySlot, true);
             outgoingBlock.transform.position = traySlot.position;
             outgoingBlock.transform.localScale = Vector3.one;
+        });
+
+        return sequence;
+    }
+
+    public Sequence ReversePushFromTrayAnimated(
+        List<BlockView> previousBlocks,
+        BlockView previousTrayBlock,
+        BlockView currentTrayBlock,
+        Transform traySlot,
+        float trayToColumnDuration,
+        float pushDuration,
+        float returnToTrayDuration)
+    {
+        Sequence sequence = DOTween.Sequence();
+        Vector3 entryPosition = GetEntryPosition();
+        Vector3 exitPosition = GetExitPosition();
+        int lastIndex = slots.Count - 1;
+
+        currentTrayBlock.transform.SetParent(slots[lastIndex], true);
+        previousTrayBlock.transform.SetParent(traySlot, true);
+        currentTrayBlock.SetSortingOrder(25);
+        previousTrayBlock.SetSortingOrder(30);
+
+        sequence.Append(currentTrayBlock.transform.DOMove(exitPosition, returnToTrayDuration).SetEase(Ease.InOutQuad));
+        sequence.Append(currentTrayBlock.transform.DOMove(slots[lastIndex].position, pushDuration).SetEase(Ease.OutQuad));
+
+        for (int i = 0; i < previousBlocks.Count - 1; i++)
+        {
+            BlockView block = previousBlocks[i];
+            Transform targetSlot = slots[i];
+            block.transform.SetParent(targetSlot, true);
+            sequence.Join(block.transform.DOMove(targetSlot.position, pushDuration).SetEase(Ease.OutQuad));
+        }
+
+        previousTrayBlock.transform.SetParent(traySlot, true);
+        sequence.Join(previousTrayBlock.transform.DOMove(entryPosition, pushDuration).SetEase(Ease.OutQuad));
+        sequence.Append(previousTrayBlock.transform.DOMove(traySlot.position, trayToColumnDuration).SetEase(Ease.InOutQuad));
+        sequence.AppendCallback(() =>
+        {
+            blocks.Clear();
+            blocks.AddRange(previousBlocks);
+            SnapBlocksToSlots();
+
+            previousTrayBlock.SetSortingOrder(10);
+            currentTrayBlock.SetSortingOrder(10);
+            previousTrayBlock.transform.SetParent(traySlot, true);
+            previousTrayBlock.transform.position = traySlot.position;
+            previousTrayBlock.transform.localScale = Vector3.one;
         });
 
         return sequence;
@@ -181,6 +302,49 @@ public class ColumnView : MonoBehaviour
         return sequence;
     }
 
+    public bool TryGetSingleMismatchIndex(BlockColorId targetColor, out int mismatchIndex)
+    {
+        mismatchIndex = GetSingleMismatchIndex(targetColor);
+        return mismatchIndex >= 0;
+    }
+
+    public Sequence ReverseSingleMismatchToBottomAnimated(int originalMismatchIndex, float duration)
+    {
+        Sequence sequence = DOTween.Sequence();
+        int lastIndex = blocks.Count - 1;
+
+        if (originalMismatchIndex < 0 || originalMismatchIndex >= lastIndex)
+        {
+            return sequence;
+        }
+
+        BlockView mismatchBlock = blocks[lastIndex];
+        mismatchBlock.SetSortingOrder(26);
+
+        for (int i = lastIndex; i > originalMismatchIndex; i--)
+        {
+            blocks[i] = blocks[i - 1];
+        }
+
+        blocks[originalMismatchIndex] = mismatchBlock;
+
+        for (int i = originalMismatchIndex; i <= lastIndex; i++)
+        {
+            BlockView block = blocks[i];
+            Transform targetSlot = slots[i];
+            block.transform.SetParent(targetSlot, true);
+            sequence.Join(block.transform.DOMove(targetSlot.position, duration).SetEase(Ease.OutQuad));
+        }
+
+        sequence.AppendCallback(() =>
+        {
+            mismatchBlock.SetSortingOrder(10);
+            SnapBlocksToSlots();
+        });
+
+        return sequence;
+    }
+
     private int GetSingleMismatchIndex(BlockColorId targetColor)
     {
         int mismatchIndex = -1;
@@ -207,7 +371,7 @@ public class ColumnView : MonoBehaviour
 
     public bool IsSolved()
     {
-        if (blocks.Count == 0)
+        if (blocks.Count == 0 || blocks.Count != slots.Count)
         {
             return false;
         }

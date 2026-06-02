@@ -5,11 +5,18 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "LevelData", menuName = "Block Stack Sort/Level Data")]
 public class LevelData : ScriptableObject
 {
+    [SerializeField, Min(1)] private int maxMoves = 20;
     [SerializeField] private BlockColorId trayColor = BlockColorId.White;
     [SerializeField] private List<LevelColumnData> columns = new List<LevelColumnData>();
 
+    public int MaxMoves => maxMoves > 0 ? maxMoves : 20;
     public BlockColorId TrayColor => trayColor;
     public IReadOnlyList<LevelColumnData> Columns => columns;
+
+    public void SetMaxMoves(int moves)
+    {
+        maxMoves = Mathf.Max(1, moves);
+    }
 
     public void SetTrayColor(BlockColorId colorId)
     {

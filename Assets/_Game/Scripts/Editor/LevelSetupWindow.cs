@@ -7,9 +7,11 @@ public class LevelSetupWindow : EditorWindow
     private const string DefaultLevelFolder = "Assets/_Game/Levels";
 
     private LevelData levelData;
+    private int maxMoves = 20;
     private int columnCount = 3;
     private int slotCount = 5;
-    private float columnSpacing = 0.75f;
+    private float columnSpacing = 0.9f;
+    private float minColumnGap = 0.15f;
     private float slotSpacing = 1f;
     private Vector2 slotScale = new Vector2(0.75f, 1f);
     private Vector2 firstColumnPosition = new Vector2(-1.2f, 2.2f);
@@ -69,6 +71,15 @@ public class LevelSetupWindow : EditorWindow
     private void DrawSizeSection()
     {
         EditorGUILayout.LabelField("Board Size", EditorStyles.boldLabel);
+        int nextMaxMoves = Mathf.Max(1, EditorGUILayout.IntField("Moves", maxMoves));
+        if (nextMaxMoves != maxMoves)
+        {
+            maxMoves = nextMaxMoves;
+            Undo.RecordObject(levelData, "Change Level Moves");
+            levelData.SetMaxMoves(maxMoves);
+            EditorUtility.SetDirty(levelData);
+        }
+
         columnCount = Mathf.Max(1, EditorGUILayout.IntField("Column Count", columnCount));
         slotCount = Mathf.Max(1, EditorGUILayout.IntField("Slots Per Column", slotCount));
 
@@ -80,6 +91,7 @@ public class LevelSetupWindow : EditorWindow
 
         EditorGUILayout.Space(4f);
         columnSpacing = EditorGUILayout.FloatField("Column Spacing", columnSpacing);
+        minColumnGap = Mathf.Max(0f, EditorGUILayout.FloatField("Min Column Gap", minColumnGap));
         slotSpacing = EditorGUILayout.FloatField("Slot Spacing", slotSpacing);
         slotScale = EditorGUILayout.Vector2Field("Slot Scale", slotScale);
         firstColumnPosition = EditorGUILayout.Vector2Field("First Column Top Slot", firstColumnPosition);
@@ -110,6 +122,7 @@ public class LevelSetupWindow : EditorWindow
         EditorGUILayout.LabelField("Blocks", EditorStyles.boldLabel);
 
         levelData.SetTrayColor((BlockColorId)EditorGUILayout.EnumPopup("Tray Color", levelData.TrayColor));
+        maxMoves = Mathf.Max(1, levelData.MaxMoves);
 
         List<LevelColumnData> columns = levelData.GetMutableColumns();
         for (int columnIndex = 0; columnIndex < columns.Count; columnIndex++)
@@ -169,6 +182,7 @@ public class LevelSetupWindow : EditorWindow
 
         levelData = CreateInstance<LevelData>();
         AssetDatabase.CreateAsset(levelData, path);
+        levelData.SetMaxMoves(maxMoves);
         EnsureLevelSize(columnCount, slotCount);
         SaveLevelAsset();
         Selection.activeObject = levelData;
@@ -245,12 +259,13 @@ public class LevelSetupWindow : EditorWindow
         ClearChildren(columnRoot);
 
         IReadOnlyList<LevelColumnData> columns = levelData.Columns;
+        float effectiveColumnSpacing = Mathf.Max(columnSpacing, Mathf.Abs(slotScale.x) + minColumnGap);
         for (int columnIndex = 0; columnIndex < columns.Count; columnIndex++)
         {
             GameObject columnObject = new GameObject($"Column{columnIndex + 1}");
             Undo.RegisterCreatedObjectUndo(columnObject, "Create Column");
             columnObject.transform.SetParent(columnRoot, false);
-            columnObject.transform.localPosition = new Vector3(firstColumnPosition.x + (columnIndex * columnSpacing), firstColumnPosition.y, 0f);
+            columnObject.transform.localPosition = new Vector3(firstColumnPosition.x + (columnIndex * effectiveColumnSpacing), firstColumnPosition.y, 0f);
             columnObject.AddComponent<ColumnView>();
 
             int localSlotCount = columns[columnIndex].Blocks.Count;

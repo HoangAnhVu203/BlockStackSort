@@ -16,6 +16,8 @@ public class BlockView : MonoBehaviour
             spriteRenderer.color = visualColor;
             spriteRenderer.sortingOrder = 10;
         }
+
+        EnsureTapCollider();
     }
 
     public void SetSortingOrder(int sortingOrder)
@@ -25,5 +27,17 @@ public class BlockView : MonoBehaviour
         {
             spriteRenderer.sortingOrder = sortingOrder;
         }
+    }
+
+    private void EnsureTapCollider()
+    {
+        if (GetComponent<Collider2D>() != null)
+        {
+            return;
+        }
+
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        BoxCollider2D boxCollider = gameObject.AddComponent<BoxCollider2D>();
+        boxCollider.size = spriteRenderer != null && spriteRenderer.sprite != null ? spriteRenderer.sprite.bounds.size : Vector2.one;
     }
 }

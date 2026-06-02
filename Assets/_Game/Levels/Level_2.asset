@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47c94bf79eee84adcb0a66880f881800, type: 3}
   m_Name: Level_2
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  maxMoves: 20
   trayColor: 0
   columns:
   - blocks: 0100000002000000030000000100000002000000

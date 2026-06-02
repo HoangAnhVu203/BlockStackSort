@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class UIManager : Singleton<UIManager>
 {
@@ -14,6 +17,18 @@ public class UIManager : Singleton<UIManager>
     private void Awake()
     {
         GameObject[] prefabs = Resources.LoadAll<GameObject>(UI_RESOURCE_PATH);
+        RegisterUIPrefabs(prefabs);
+
+#if UNITY_EDITOR
+        if (canvasPrefabs.Count == 0)
+        {
+            LoadEditorUIPrefabs();
+        }
+#endif
+    }
+
+    private void RegisterUIPrefabs(GameObject[] prefabs)
+    {
         for (int i = 0; i < prefabs.Length; i++)
         {
             UICanvas canvas = prefabs[i].GetComponent<UICanvas>();
@@ -25,6 +40,26 @@ public class UIManager : Singleton<UIManager>
             canvasPrefabs[canvas.GetType()] = canvas;
         }
     }
+
+#if UNITY_EDITOR
+    private void LoadEditorUIPrefabs()
+    {
+        string[] guids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/_Game/ReSources/UI" });
+        List<GameObject> prefabs = new List<GameObject>();
+
+        for (int i = 0; i < guids.Length; i++)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guids[i]);
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (prefab != null)
+            {
+                prefabs.Add(prefab);
+            }
+        }
+
+        RegisterUIPrefabs(prefabs.ToArray());
+    }
+#endif
 
     //mo canvas
     public T OpenUI<T>() where T : UICanvas
@@ -104,6 +139,17 @@ public class UIManager : Singleton<UIManager>
             if (canvas != null && canvas.gameObject.activeSelf)
             {
                 canvas.Close(0);
+            }
+        }
+    }
+
+    public void CloseAllDirectly()
+    {
+        foreach (var canvas in canvasActives.Values)
+        {
+            if (canvas != null)
+            {
+                canvas.CloseDirectly();
             }
         }
     }
