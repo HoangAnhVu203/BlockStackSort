@@ -15,18 +15,23 @@ MonoBehaviour:
   maxMoves: 20
   trayColor: 0
   columns:
-  - blocks: 0100000002000000030000000100000002000000
+  - blocks: 010000000200000003000000080000000b000000
+    coveredBlocks: 0000000000
+    hasAcceptedColor: 0
+    acceptedColor: 0
+  - blocks: 0100000002000000030000000500000002000000
+    coveredBlocks: 0000000000
+    hasAcceptedColor: 0
+    acceptedColor: 0
+  - blocks: 01000000020000000b0000000800000005000000
+    coveredBlocks: 0000000000
     hasAcceptedColor: 0
     acceptedColor: 0
   - blocks: 0100000002000000030000000100000002000000
+    coveredBlocks: 0000000000
     hasAcceptedColor: 0
     acceptedColor: 0
   - blocks: 0100000002000000030000000100000002000000
-    hasAcceptedColor: 0
-    acceptedColor: 0
-  - blocks: 0100000002000000030000000100000002000000
-    hasAcceptedColor: 0
-    acceptedColor: 0
-  - blocks: 0100000002000000030000000100000002000000
+    coveredBlocks: 0001000000
     hasAcceptedColor: 0
     acceptedColor: 0

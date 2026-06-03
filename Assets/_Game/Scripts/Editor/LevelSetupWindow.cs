@@ -137,9 +137,13 @@ public class LevelSetupWindow : EditorWindow
             column.SetAcceptedColorRule(hasRule, acceptedColor);
 
             List<BlockColorId> blocks = column.GetMutableBlocks();
+            List<bool> coveredBlocks = column.GetMutableCoveredBlocks();
             for (int slotIndex = 0; slotIndex < blocks.Count; slotIndex++)
             {
+                EditorGUILayout.BeginHorizontal();
                 blocks[slotIndex] = (BlockColorId)EditorGUILayout.EnumPopup($"Slot {slotIndex} (Top -> Bottom)", blocks[slotIndex]);
+                coveredBlocks[slotIndex] = EditorGUILayout.ToggleLeft("Cover", coveredBlocks[slotIndex], GUILayout.Width(80f));
+                EditorGUILayout.EndHorizontal();
             }
 
             EditorGUILayout.EndVertical();
@@ -220,6 +224,8 @@ public class LevelSetupWindow : EditorWindow
             {
                 blocks.RemoveAt(blocks.Count - 1);
             }
+
+            columns[columnIndex].EnsureCoverSize();
         }
 
         EditorUtility.SetDirty(levelData);

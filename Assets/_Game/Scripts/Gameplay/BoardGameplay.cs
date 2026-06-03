@@ -10,6 +10,9 @@ public class BoardGameplay : MonoBehaviour
     private const string YellowPrefabPath = "Assets/_Game/Prefabs/Block/BlockYellow.prefab";
     private const string GreenPrefabPath = "Assets/_Game/Prefabs/Block/BlocGreen.prefab";
     private const string WhitePrefabPath = "Assets/_Game/Prefabs/Block/BlockWhite.prefab";
+    private const string BlackPrefabPath = "Assets/_Game/Prefabs/Block/BlocBlack.prefab";
+    private const string BlueSkyPrefabPath = "Assets/_Game/Prefabs/Block/BlockBlueSky.prefab";
+    private const string OrangePrefabPath = "Assets/_Game/Prefabs/Block/BlockOrange.prefab";
 
     [Header("Scene")]
     [SerializeField] private Transform boardRoot;
@@ -35,6 +38,9 @@ public class BoardGameplay : MonoBehaviour
     [SerializeField] private GameObject yellowBlockPrefab;
     [SerializeField] private GameObject greenBlockPrefab;
     [SerializeField] private GameObject whiteBlockPrefab;
+    [SerializeField] private GameObject blackBlockPrefab;
+    [SerializeField] private GameObject blueSkyBlockPrefab;
+    [SerializeField] private GameObject orangeBlockPrefab;
 
     [Header("Animation")]
     [SerializeField] private float trayToColumnDuration = 0.25f;
@@ -50,6 +56,8 @@ public class BoardGameplay : MonoBehaviour
     [SerializeField] private float winWaveDelay = 0.08f;
 
     private readonly List<ColumnView> columns = new List<ColumnView>();
+    private readonly List<bool> solvedColumnStates = new List<bool>();
+    private readonly List<BlockView> bottomBlockStates = new List<BlockView>();
     private readonly Stack<MoveRecord> moveHistory = new Stack<MoveRecord>();
     private BlockView trayBlock;
     private bool isAnimating;
@@ -58,6 +66,7 @@ public class BoardGameplay : MonoBehaviour
     private SpriteRenderer magnetOverlay;
     private MoveRecord pendingMoveRecord;
     private bool isInitialized;
+    private bool solvedColumnStatesInitialized;
     private int maxMoves;
     private int remainingMoves;
 
@@ -131,6 +140,9 @@ public class BoardGameplay : MonoBehaviour
     public void ClearFromManager()
     {
         ClearExistingBlocks();
+        solvedColumnStates.Clear();
+        bottomBlockStates.Clear();
+        solvedColumnStatesInitialized = false;
         moveHistory.Clear();
         pendingMoveRecord = null;
         trayBlock = null;
@@ -195,6 +207,9 @@ public class BoardGameplay : MonoBehaviour
         yellowBlockPrefab = yellowBlockPrefab != null ? yellowBlockPrefab : LoadEditorBlockPrefab(YellowPrefabPath);
         greenBlockPrefab = greenBlockPrefab != null ? greenBlockPrefab : LoadEditorBlockPrefab(GreenPrefabPath);
         whiteBlockPrefab = whiteBlockPrefab != null ? whiteBlockPrefab : LoadEditorBlockPrefab(WhitePrefabPath);
+        blackBlockPrefab = blackBlockPrefab != null ? blackBlockPrefab : LoadEditorBlockPrefab(BlackPrefabPath);
+        blueSkyBlockPrefab = blueSkyBlockPrefab != null ? blueSkyBlockPrefab : LoadEditorBlockPrefab(BlueSkyPrefabPath);
+        orangeBlockPrefab = orangeBlockPrefab != null ? orangeBlockPrefab : LoadEditorBlockPrefab(OrangePrefabPath);
 #endif
     }
 
@@ -212,6 +227,9 @@ public class BoardGameplay : MonoBehaviour
         }
 
         ClearExistingBlocks();
+        solvedColumnStates.Clear();
+        bottomBlockStates.Clear();
+        solvedColumnStatesInitialized = false;
         moveHistory.Clear();
         pendingMoveRecord = null;
         ResetMoveLimit();
@@ -244,13 +262,13 @@ public class BoardGameplay : MonoBehaviour
             for (int slotIndex = 0; slotIndex < column.SlotCount; slotIndex++)
             {
                 BlockColorId colorId = layout[slotIndex % layout.GetLength(0), columnIndex % layout.GetLength(1)];
-                spawnedBlocks.Add(CreateBlock(colorId, column.Slots[slotIndex]));
+                spawnedBlocks.Add(CreateBlock(colorId, column.Slots[slotIndex], false));
             }
 
             column.SetBlocks(spawnedBlocks);
         }
 
-        trayBlock = CreateBlock(BlockColorId.White, traySlot);
+        trayBlock = CreateBlock(BlockColorId.White, traySlot, false);
         trayBlock.transform.position = traySlot.position;
         trayBlock.transform.localScale = Vector3.one;
 
@@ -522,7 +540,7 @@ public class BoardGameplay : MonoBehaviour
             trayBlock = moveRecord.PreviousTrayBlock;
             isAnimating = false;
             RefreshLockedColumns();
-            RestoreMove();
+            NotifyGameplayPanelChanged();
         });
     }
 
@@ -802,7 +820,10 @@ public class BoardGameplay : MonoBehaviour
 
             for (int slotIndex = 0; slotIndex < spawnCount; slotIndex++)
             {
-                spawnedBlocks.Add(CreateBlock(columnData.Blocks[slotIndex], column.Slots[slotIndex]));
+                spawnedBlocks.Add(CreateBlock(
+                    columnData.Blocks[slotIndex],
+                    column.Slots[slotIndex],
+                    columnData.IsBlockCovered(slotIndex)));
             }
 
             if (spawnCount != column.SlotCount)
@@ -813,7 +834,7 @@ public class BoardGameplay : MonoBehaviour
             column.SetBlocks(spawnedBlocks);
         }
 
-        trayBlock = CreateBlock(levelData.TrayColor, traySlot);
+        trayBlock = CreateBlock(levelData.TrayColor, traySlot, false);
         trayBlock.transform.position = traySlot.position;
         trayBlock.transform.localScale = Vector3.one;
     }
@@ -1058,9 +1079,85 @@ public class BoardGameplay : MonoBehaviour
 
     private void RefreshLockedColumns()
     {
+        EnsureSolvedColumnStateSize();
+        EnsureBottomBlockStateSize();
+        bool canPlaySolvedWave = solvedColumnStatesInitialized && !IsBoardSolved();
+
         for (int i = 0; i < columns.Count; i++)
         {
-            columns[i].SetLocked(columns[i].IsSolved());
+            bool isSolved = columns[i].IsSolved();
+            columns[i].SetLocked(isSolved);
+
+            if (canPlaySolvedWave && isSolved && !solvedColumnStates[i])
+            {
+                PlayColumnSolvedWave(columns[i]);
+            }
+
+            solvedColumnStates[i] = isSolved;
+            CheckBottomCoverBurn(i);
+        }
+
+        solvedColumnStatesInitialized = true;
+    }
+
+    private void EnsureSolvedColumnStateSize()
+    {
+        while (solvedColumnStates.Count < columns.Count)
+        {
+            solvedColumnStates.Add(false);
+        }
+
+        while (solvedColumnStates.Count > columns.Count)
+        {
+            solvedColumnStates.RemoveAt(solvedColumnStates.Count - 1);
+        }
+    }
+
+    private void EnsureBottomBlockStateSize()
+    {
+        while (bottomBlockStates.Count < columns.Count)
+        {
+            bottomBlockStates.Add(null);
+        }
+
+        while (bottomBlockStates.Count > columns.Count)
+        {
+            bottomBlockStates.RemoveAt(bottomBlockStates.Count - 1);
+        }
+    }
+
+    private void CheckBottomCoverBurn(int columnIndex)
+    {
+        IReadOnlyList<BlockView> blocks = columns[columnIndex].Blocks;
+        BlockView bottomBlock = blocks.Count > 0 ? blocks[blocks.Count - 1] : null;
+        BlockView previousBottomBlock = bottomBlockStates[columnIndex];
+
+        if (solvedColumnStatesInitialized && bottomBlock != null && bottomBlock != previousBottomBlock)
+        {
+            bottomBlock.BurnCoverTopToBottom();
+        }
+
+        bottomBlockStates[columnIndex] = bottomBlock;
+    }
+
+    private void PlayColumnSolvedWave(ColumnView column)
+    {
+        IReadOnlyList<BlockView> blocks = column.Blocks;
+        for (int i = 0; i < blocks.Count; i++)
+        {
+            Transform blockTransform = blocks[i].transform;
+            blockTransform.DOKill();
+            blockTransform.localScale = Vector3.one;
+
+            Vector3 targetScale = Vector3.one * winScaleMultiplier;
+            float delay = i * winWaveDelay;
+            blockTransform.DOScale(targetScale, winScaleDuration)
+                .SetDelay(delay)
+                .SetEase(Ease.OutQuad)
+                .OnComplete(() =>
+                {
+                    blockTransform.DOScale(Vector3.one, winScaleDuration).SetEase(Ease.InQuad);
+                });
         }
     }
 
@@ -1152,16 +1249,6 @@ public class BoardGameplay : MonoBehaviour
         }
     }
 
-    private void RestoreMove()
-    {
-        if (maxMoves > 0)
-        {
-            remainingMoves = Mathf.Min(maxMoves, remainingMoves + 1);
-        }
-
-        NotifyGameplayPanelChanged();
-    }
-
     private void NotifyGameplayPanelChanged()
     {
         PanelGameplay panelGameplay = FindFirstObjectByType<PanelGameplay>(FindObjectsInactive.Include);
@@ -1198,8 +1285,10 @@ public class BoardGameplay : MonoBehaviour
                 }
 
                 Transform blockTransform = blocks[slotIndex].transform;
-                Vector3 startScale = blockTransform.localScale;
-                Vector3 targetScale = startScale * winScaleMultiplier;
+                blockTransform.DOKill();
+                blockTransform.localScale = Vector3.one;
+                Vector3 startScale = Vector3.one;
+                Vector3 targetScale = Vector3.one * winScaleMultiplier;
                 float delay = (slotIndex * winWaveDelay) + (columnIndex * winWaveDelay * 0.35f);
 
                 sequence.Insert(delay, blockTransform.DOScale(targetScale, winScaleDuration).SetEase(Ease.OutQuad));
@@ -1421,7 +1510,7 @@ public class BoardGameplay : MonoBehaviour
         }
     }
 
-    private BlockView CreateBlock(BlockColorId colorId, Transform parentSlot)
+    private BlockView CreateBlock(BlockColorId colorId, Transform parentSlot, bool hasCover)
     {
         GameObject prefab = GetPrefab(colorId);
         GameObject blockObject = Instantiate(prefab, parentSlot.position, Quaternion.identity, parentSlot);
@@ -1432,7 +1521,8 @@ public class BoardGameplay : MonoBehaviour
         }
 
         block.name = $"Block_{colorId}";
-        block.SetColor(colorId, GetColor(colorId));
+        block.SetColorId(colorId);
+        block.SetCoverActive(hasCover);
         return block;
     }
 
@@ -1446,23 +1536,14 @@ public class BoardGameplay : MonoBehaviour
                 return greenBlockPrefab != null ? greenBlockPrefab : redBlockPrefab;
             case BlockColorId.White:
                 return whiteBlockPrefab != null ? whiteBlockPrefab : redBlockPrefab;
+            case BlockColorId.Black:
+                return blackBlockPrefab != null ? blackBlockPrefab : redBlockPrefab;
+            case BlockColorId.BlueSky:
+                return blueSkyBlockPrefab != null ? blueSkyBlockPrefab : redBlockPrefab;
+            case BlockColorId.Orange:
+                return orangeBlockPrefab != null ? orangeBlockPrefab : redBlockPrefab;
             default:
                 return redBlockPrefab;
-        }
-    }
-
-    private Color GetColor(BlockColorId colorId)
-    {
-        switch (colorId)
-        {
-            case BlockColorId.Red:
-                return Color.red;
-            case BlockColorId.Yellow:
-                return Color.yellow;
-            case BlockColorId.Green:
-                return Color.green;
-            default:
-                return Color.white;
         }
     }
 

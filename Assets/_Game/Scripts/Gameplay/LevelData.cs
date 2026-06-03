@@ -33,6 +33,7 @@ public class LevelData : ScriptableObject
 public class LevelColumnData
 {
     [SerializeField] private List<BlockColorId> blocks = new List<BlockColorId>();
+    [SerializeField] private List<bool> coveredBlocks = new List<bool>();
     [SerializeField] private bool hasAcceptedColor;
     [SerializeField] private BlockColorId acceptedColor = BlockColorId.Red;
 
@@ -45,9 +46,34 @@ public class LevelColumnData
         return blocks;
     }
 
+    public List<bool> GetMutableCoveredBlocks()
+    {
+        EnsureCoverSize();
+        return coveredBlocks;
+    }
+
+    public bool IsBlockCovered(int blockIndex)
+    {
+        EnsureCoverSize();
+        return blockIndex >= 0 && blockIndex < coveredBlocks.Count && coveredBlocks[blockIndex];
+    }
+
     public void SetAcceptedColorRule(bool enabled, BlockColorId colorId)
     {
         hasAcceptedColor = enabled;
         acceptedColor = colorId;
+    }
+
+    public void EnsureCoverSize()
+    {
+        while (coveredBlocks.Count < blocks.Count)
+        {
+            coveredBlocks.Add(false);
+        }
+
+        while (coveredBlocks.Count > blocks.Count)
+        {
+            coveredBlocks.RemoveAt(coveredBlocks.Count - 1);
+        }
     }
 }

@@ -16,11 +16,14 @@ MonoBehaviour:
   trayColor: 0
   columns:
   - blocks: 010000000200000003000000
+    coveredBlocks: 
     hasAcceptedColor: 0
     acceptedColor: 0
   - blocks: 010000000200000003000000
+    coveredBlocks: 
     hasAcceptedColor: 0
     acceptedColor: 0
   - blocks: 010000000200000003000000
+    coveredBlocks: 
     hasAcceptedColor: 0
     acceptedColor: 0
