@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47c94bf79eee84adcb0a66880f881800, type: 3}
+  m_Name: Level_12
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  maxMoves: 49
+  trayColor: 7
+  columns:
+  - blocks: 030000000100000008000000020000000100000008000000
+    coveredBlocks: 010100000000
+    hasAcceptedColor: 0
+    acceptedColor: 1
+  - blocks: 070000000700000008000000010000000b00000001000000
+    coveredBlocks: 010100000000
+    hasAcceptedColor: 0
+    acceptedColor: 1
+  - blocks: 02000000030000000300000009000000020000000b000000
+    coveredBlocks: 000101000000
+    hasAcceptedColor: 0
+    acceptedColor: 1
+  - blocks: 02000000020000000b00000001000000010000000b000000
+    coveredBlocks: 000001010000
+    hasAcceptedColor: 0
+    acceptedColor: 1
+  - blocks: 08000000070000000200000003000000070000000b000000
+    coveredBlocks: 010100000000
+    hasAcceptedColor: 0
+    acceptedColor: 1
+  - blocks: 0b0000000800000007000000080000000300000003000000
+    coveredBlocks: 010100000000
+    hasAcceptedColor: 0
+    acceptedColor: 1

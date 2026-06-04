@@ -564,7 +564,7 @@ GameObject:
   - component: {fileID: 502647740}
   - component: {fileID: 502647739}
   m_Layer: 0
-  m_Name: Square
+  m_Name: BG
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -617,7 +617,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -5
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -638,8 +638,8 @@ Transform:
   m_GameObject: {fileID: 502647738}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.2058, y: -0.30361, z: 0}
-  m_LocalScale: {x: 10, y: 50, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 30, y: 30, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1095,6 +1095,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ColumnView
   slots: []
+  freezeOverlay: {fileID: 0}
+  freezeCounterText: {fileID: 0}
+  freezeCounterFont: {fileID: 0}
+  freezeCounterCharacterSize: 0.22
+  freezeCounterFontSize: 48
+  freezeCounterColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &857273463
 GameObject:
   m_ObjectHideFlags: 0
@@ -1192,6 +1198,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ColumnView
   slots: []
+  freezeOverlay: {fileID: 0}
+  freezeCounterText: {fileID: 0}
+  freezeCounterFont: {fileID: 0}
+  freezeCounterCharacterSize: 0.22
+  freezeCounterFontSize: 48
+  freezeCounterColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &1068515548
 GameObject:
   m_ObjectHideFlags: 0
@@ -1273,6 +1285,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ColumnView
   slots: []
+  freezeOverlay: {fileID: 0}
+  freezeCounterText: {fileID: 0}
+  freezeCounterFont: {fileID: 0}
+  freezeCounterCharacterSize: 0.22
+  freezeCounterFontSize: 48
+  freezeCounterColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &1129639984
 GameObject:
   m_ObjectHideFlags: 0
@@ -1460,9 +1478,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelManager
   boardGameplay: {fileID: 1370795346}
   levels:
+  - {fileID: 11400000, guid: 5449fa89967c14f18806e198bcc3308e, type: 2}
   - {fileID: 11400000, guid: e6127dbbe7f0f49e187bfd110560e042, type: 2}
   - {fileID: 11400000, guid: c980e576ccd4d430e907c9f7aacd0973, type: 2}
   - {fileID: 11400000, guid: e78ec11abb35e4b67864adab921d9375, type: 2}
+  - {fileID: 11400000, guid: 92f1e9ebc71814cbca8e3ac7d2876b5c, type: 2}
+  - {fileID: 11400000, guid: 104eeb0ebe0dc4717894824193007c49, type: 2}
+  - {fileID: 11400000, guid: aa250ea418763413595165cdef3b903f, type: 2}
+  - {fileID: 11400000, guid: 829a22e7b6c324b01b4558148b208b57, type: 2}
+  - {fileID: 11400000, guid: 5c1a824b13cbd4b7eae2aee36e142040, type: 2}
+  - {fileID: 11400000, guid: 7d1f25b0bc1b443748673c03ea5eed02, type: 2}
+  - {fileID: 11400000, guid: 6ccb0cbf0172c4903b19a6a08b8e21d4, type: 2}
+  - {fileID: 11400000, guid: 872354c60c5e54322857a7da96a72ffa, type: 2}
+  - {fileID: 11400000, guid: fc40e92ebf3ee481180389c768790dd4, type: 2}
 --- !u!1 &1301411683
 GameObject:
   m_ObjectHideFlags: 0
@@ -1576,8 +1604,8 @@ MonoBehaviour:
   traySlot: {fileID: 334368474}
   currentLevel: {fileID: 0}
   columnSpacing: 1
-  minColumnGap: 0.15
-  slotSpacing: 1.025
+  minColumnGap: 0.25
+  slotSpacing: 1.1
   slotScale: {x: 1, y: 1}
   firstColumnPosition: {x: -1.2, y: 2.2}
   trayPosition: {x: 0, y: -2.3}
@@ -1588,9 +1616,18 @@ MonoBehaviour:
   yellowBlockPrefab: {fileID: 3004904773110896835, guid: 04060a9a7e24647f1ae8e7ca1404e236, type: 3}
   greenBlockPrefab: {fileID: 6719688238450979588, guid: 16ef08b95c77346458276651ec4ecc68, type: 3}
   whiteBlockPrefab: {fileID: 3858616575577698681, guid: fa8a37713cfd94d0482482453a3bcc0c, type: 3}
-  blackBlockPrefab: {fileID: 0}
-  blueSkyBlockPrefab: {fileID: 0}
-  orangeBlockPrefab: {fileID: 0}
+  pinkBlockPrefab: {fileID: 6253070138941486777, guid: 46730b597988e4f0baf1f548e8924ef7, type: 3}
+  blackBlockPrefab: {fileID: 8753704958045781179, guid: 326a7bbe3036a4ca39b79b6ef2dd1d89, type: 3}
+  brownBlockPrefab: {fileID: 785385262849308599, guid: 8c58ddaec7c5045deb30ca2a949ae634, type: 3}
+  purpleBlockPrefab: {fileID: 8752234679083646003, guid: 6c2aa309451d74f6dbd8b03064428be5, type: 3}
+  blueSkyBlockPrefab: {fileID: 6583981429174559921, guid: 2e6bebe4718c64b4a886e8b5bfbfbbf6, type: 3}
+  rainbowBlockPrefab: {fileID: 3252520757256898164, guid: 15d3341aec7ce4d4894a18d4d9ff648f, type: 3}
+  blueBlockPrefab: {fileID: 4389936248008098658, guid: cfde6ed4b3ab042b497f3b4e0f38954e, type: 3}
+  orangeBlockPrefab: {fileID: 163290534425230144, guid: b5a8ab8c58fce4454a86581c16a9e61a, type: 3}
+  freezeCounterFont: {fileID: 12800000, guid: a31e6545773ba42b1aea88a3ba7dda1b, type: 3}
+  freezeCounterCharacterSize: 0.22
+  freezeCounterFontSize: 48
+  freezeCounterColor: {r: 0, g: 0, b: 0, a: 1}
   trayToColumnDuration: 0.25
   pushDuration: 0.225
   returnToTrayDuration: 0.3125
@@ -1789,6 +1826,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ColumnView
   slots: []
+  freezeOverlay: {fileID: 0}
+  freezeCounterText: {fileID: 0}
+  freezeCounterFont: {fileID: 0}
+  freezeCounterCharacterSize: 0.22
+  freezeCounterFontSize: 48
+  freezeCounterColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &1468166318
 GameObject:
   m_ObjectHideFlags: 0
@@ -2007,6 +2050,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ColumnView
   slots: []
+  freezeOverlay: {fileID: 0}
+  freezeCounterText: {fileID: 0}
+  freezeCounterFont: {fileID: 0}
+  freezeCounterCharacterSize: 0.22
+  freezeCounterFontSize: 48
+  freezeCounterColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &1679867704
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,6 +6,12 @@ using UnityEngine;
 public class ColumnView : MonoBehaviour
 {
     [SerializeField] private List<Transform> slots = new List<Transform>();
+    [SerializeField] private SpriteRenderer freezeOverlay;
+    [SerializeField] private TextMesh freezeCounterText;
+    [SerializeField] private Font freezeCounterFont;
+    [SerializeField] private float freezeCounterCharacterSize = 0.22f;
+    [SerializeField] private int freezeCounterFontSize = 48;
+    [SerializeField] private Color freezeCounterColor = Color.black;
 
     public event Action<ColumnView> Clicked;
 
@@ -17,8 +23,12 @@ public class ColumnView : MonoBehaviour
     private bool isLocked;
     private bool hasAcceptedColor;
     private BlockColorId acceptedColor;
+    private int freezeUnlockColumnCount;
+    private bool isFreezeLocked;
 
     public bool IsLocked => isLocked;
+    public bool IsFreezeLocked => isFreezeLocked;
+    public bool HasFreezeLock => freezeUnlockColumnCount > 0;
     public IReadOnlyList<BlockView> Blocks => blocks;
 
     public void Initialize()
@@ -40,9 +50,55 @@ public class ColumnView : MonoBehaviour
         acceptedColor = colorId;
     }
 
+    public void ConfigureFreezeLock(
+        int unlockColumnCount,
+        Font counterFont,
+        float counterCharacterSize,
+        int counterFontSize,
+        Color counterColor)
+    {
+        freezeUnlockColumnCount = Mathf.Max(0, unlockColumnCount);
+        freezeCounterFont = counterFont;
+        freezeCounterCharacterSize = Mathf.Max(0.01f, counterCharacterSize);
+        freezeCounterFontSize = Mathf.Max(1, counterFontSize);
+        freezeCounterColor = counterColor;
+        ResolveFreezeVisual();
+        UpdateFreezeLock(0);
+    }
+
+    public void UpdateFreezeLock(int solvedColumnCount)
+    {
+        if (freezeUnlockColumnCount <= 0)
+        {
+            isFreezeLocked = false;
+            SetFreezeVisualActive(false);
+            return;
+        }
+
+        int remaining = Mathf.Max(0, freezeUnlockColumnCount - solvedColumnCount);
+        bool shouldLock = remaining > 0;
+        isFreezeLocked = shouldLock;
+
+        if (!shouldLock)
+        {
+            HideFreezeVisual();
+            return;
+        }
+
+        SetFreezeVisualActive(true);
+        float progress = 1f - (remaining / (float)freezeUnlockColumnCount);
+        float alpha = Mathf.Lerp(0.85f, 0.25f, progress);
+        SetFreezeAlpha(alpha);
+
+        if (freezeCounterText != null)
+        {
+            freezeCounterText.text = remaining.ToString();
+        }
+    }
+
     public bool CanAccept(BlockColorId colorId)
     {
-        return !hasAcceptedColor || acceptedColor == colorId;
+        return !isFreezeLocked && (!hasAcceptedColor || acceptedColor == colorId);
     }
 
     public bool ContainsBlock(BlockView targetBlock)
@@ -435,12 +491,124 @@ public class ColumnView : MonoBehaviour
 
     public void SetLocked(bool locked)
     {
-        isLocked = locked;
+        isLocked = locked || isFreezeLocked;
 
         if (tapCollider != null)
         {
-            tapCollider.enabled = !locked;
+            tapCollider.enabled = !isLocked;
         }
+    }
+
+    private void ResolveFreezeVisual()
+    {
+        if (freezeOverlay != null)
+        {
+            freezeOverlay.gameObject.SetActive(false);
+        }
+
+        if (freezeCounterText == null)
+        {
+            Transform found = transform.Find("FreezeCounter");
+            freezeCounterText = found != null ? found.GetComponent<TextMesh>() : null;
+        }
+
+        if (freezeCounterText == null)
+        {
+            GameObject textObject = new GameObject("FreezeCounter");
+            textObject.transform.SetParent(transform, false);
+            freezeCounterText = textObject.AddComponent<TextMesh>();
+            freezeCounterText.anchor = TextAnchor.MiddleCenter;
+            freezeCounterText.alignment = TextAlignment.Center;
+        }
+
+        if (freezeCounterText != null)
+        {
+            Bounds bounds = GetColumnLocalBounds();
+            if (freezeCounterFont != null)
+            {
+                freezeCounterText.font = freezeCounterFont;
+                MeshRenderer textRenderer = freezeCounterText.GetComponent<MeshRenderer>();
+                if (textRenderer != null)
+                {
+                    textRenderer.sharedMaterial = freezeCounterFont.material;
+                }
+            }
+
+            freezeCounterText.characterSize = freezeCounterCharacterSize;
+            freezeCounterText.fontSize = freezeCounterFontSize;
+            freezeCounterText.color = freezeCounterColor;
+            freezeCounterText.transform.localPosition = bounds.center + new Vector3(0f, 0f, -0.01f);
+            MeshRenderer sortingRenderer = freezeCounterText.GetComponent<MeshRenderer>();
+            if (sortingRenderer != null)
+            {
+                sortingRenderer.sortingOrder = 71;
+            }
+        }
+    }
+
+    private void SetFreezeVisualActive(bool active)
+    {
+        for (int i = 0; i < blocks.Count; i++)
+        {
+            if (blocks[i] != null)
+            {
+                blocks[i].SetFreezeVisible(active, active ? 0.85f : 0f);
+            }
+        }
+
+        if (freezeCounterText != null)
+        {
+            freezeCounterText.gameObject.SetActive(active);
+        }
+    }
+
+    private void HideFreezeVisual()
+    {
+        for (int i = 0; i < blocks.Count; i++)
+        {
+            if (blocks[i] == null)
+            {
+                continue;
+            }
+
+            blocks[i].FadeOutFreeze(0.25f);
+        }
+
+        if (freezeCounterText != null)
+        {
+            freezeCounterText.gameObject.SetActive(false);
+        }
+    }
+
+    private void SetFreezeAlpha(float alpha)
+    {
+        for (int i = 0; i < blocks.Count; i++)
+        {
+            if (blocks[i] == null)
+            {
+                continue;
+            }
+
+            blocks[i].SetFreezeVisible(true, alpha);
+        }
+    }
+
+    private Bounds GetColumnLocalBounds()
+    {
+        if (slots.Count == 0)
+        {
+            return new Bounds(Vector3.zero, Vector3.one);
+        }
+
+        Bounds bounds = new Bounds(slots[0].localPosition, Vector3.zero);
+        for (int i = 1; i < slots.Count; i++)
+        {
+            bounds.Encapsulate(slots[i].localPosition);
+        }
+
+        Vector2 slotSize = GetSlotSize();
+        bounds.Expand(new Vector3(slotSize.x, slotSize.y, 0f));
+        return bounds;
     }
 
     private void SnapBlocksToSlots()

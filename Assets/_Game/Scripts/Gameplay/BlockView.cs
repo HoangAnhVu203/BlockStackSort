@@ -6,7 +6,9 @@ public class BlockView : MonoBehaviour
     [SerializeField] private BlockColorId colorId;
     [SerializeField] private SpriteRenderer coverRenderer;
     [SerializeField] private Sprite coverSprite;
-    [SerializeField] private float coverBurnDuration = 0.45f;
+    [SerializeField] private float coverBurnDuration = 0.25f;
+    [SerializeField] private GameObject coverDisappearVfx;
+    [SerializeField] private SpriteRenderer freezeRenderer;
 
     public BlockColorId ColorId => colorId;
     public bool HasCover => coverRenderer != null && coverRenderer.gameObject.activeSelf && !isCoverBurning;
@@ -62,9 +64,9 @@ public class BlockView : MonoBehaviour
         coverRenderer.DOKill();
         SyncCoverSortingOrder();
         PrepareCoverBurnMask();
+        PlayCoverDisappearVfx();
 
-        float visualHeight = GetCoverVisualHeight();
-        DOTween.To(() => 1f, progress =>
+        DOTween.To(() => 0f, progress =>
         {
             if (coverBurnMask == null)
             {
@@ -72,14 +74,15 @@ public class BlockView : MonoBehaviour
             }
 
             Transform maskTransform = coverBurnMask.transform;
-            Vector3 scale = coverStartLocalScale;
-            scale.y = coverStartLocalScale.y * progress;
+            float maskScale = Mathf.Lerp(0.05f, 1.15f, progress);
+            Vector3 scale = new Vector3(
+                coverStartLocalScale.x * maskScale,
+                coverStartLocalScale.y * maskScale,
+                coverStartLocalScale.z);
             maskTransform.localScale = scale;
 
-            Vector3 position = coverStartLocalPosition;
-            position.y = coverStartLocalPosition.y + ((progress - 1f) * visualHeight * 0.5f);
-            maskTransform.localPosition = position;
-        }, 0f, coverBurnDuration)
+            maskTransform.localPosition = coverStartLocalPosition;
+        }, 1f, coverBurnDuration)
             .SetEase(Ease.InQuad)
             .OnComplete(() =>
             {
@@ -102,6 +105,36 @@ public class BlockView : MonoBehaviour
         }
 
         SyncCoverSortingOrder();
+        SyncFreezeSortingOrder();
+    }
+
+    public void SetFreezeVisible(bool visible, float alpha)
+    {
+        ResolveFreezeRenderer();
+        if (freezeRenderer == null)
+        {
+            return;
+        }
+
+        freezeRenderer.DOKill();
+        freezeRenderer.gameObject.SetActive(visible);
+        Color color = freezeRenderer.color;
+        color.a = alpha;
+        freezeRenderer.color = color;
+        SyncFreezeSortingOrder();
+    }
+
+    public void FadeOutFreeze(float duration)
+    {
+        ResolveFreezeRenderer();
+        if (freezeRenderer == null)
+        {
+            return;
+        }
+
+        freezeRenderer.DOKill();
+        freezeRenderer.DOFade(0f, duration)
+            .OnComplete(() => freezeRenderer.gameObject.SetActive(false));
     }
 
     private void ResolveCoverRenderer()
@@ -147,6 +180,45 @@ public class BlockView : MonoBehaviour
         }
     }
 
+    private void ResolveFreezeRenderer()
+    {
+        if (freezeRenderer != null)
+        {
+            return;
+        }
+
+        SpriteRenderer[] spriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);
+        for (int i = 0; i < spriteRenderers.Length; i++)
+        {
+            if (spriteRenderers[i].transform == transform)
+            {
+                continue;
+            }
+
+            string childName = spriteRenderers[i].name.ToLowerInvariant();
+            if (childName.Contains("freeze") || childName.Contains("ice"))
+            {
+                freezeRenderer = spriteRenderers[i];
+                break;
+            }
+        }
+    }
+
+    private void SyncFreezeSortingOrder()
+    {
+        if (freezeRenderer == null)
+        {
+            return;
+        }
+
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            freezeRenderer.sortingLayerID = spriteRenderer.sortingLayerID;
+            freezeRenderer.sortingOrder = spriteRenderer.sortingOrder + 2;
+        }
+    }
+
     private void SyncCoverSortingOrder()
     {
         if (coverRenderer == null)
@@ -183,10 +255,13 @@ public class BlockView : MonoBehaviour
         coverBurnMask.sprite = coverRenderer.sprite;
         coverBurnMask.transform.localPosition = coverStartLocalPosition;
         coverBurnMask.transform.localRotation = coverRenderer.transform.localRotation;
-        coverBurnMask.transform.localScale = coverStartLocalScale;
+        coverBurnMask.transform.localScale = new Vector3(
+            coverStartLocalScale.x * 0.05f,
+            coverStartLocalScale.y * 0.05f,
+            coverStartLocalScale.z);
         SyncCoverBurnMaskSorting();
         SetCoverBurnMaskActive(true);
-        coverRenderer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+        coverRenderer.maskInteraction = SpriteMaskInteraction.VisibleOutsideMask;
         coverRenderer.transform.localPosition = coverStartLocalPosition;
         coverRenderer.transform.localScale = coverStartLocalScale;
         coverRenderer.color = coverStartColor;
@@ -213,14 +288,54 @@ public class BlockView : MonoBehaviour
         }
     }
 
-    private float GetCoverVisualHeight()
+    private void PlayCoverDisappearVfx()
     {
-        if (coverRenderer == null || coverRenderer.sprite == null)
+        ResolveCoverDisappearVfx();
+        if (coverDisappearVfx == null)
         {
-            return 1f;
+            return;
         }
 
-        return coverRenderer.sprite.bounds.size.y * Mathf.Abs(coverStartLocalScale.y);
+        coverDisappearVfx.SetActive(true);
+
+        ParticleSystem[] particleSystems = coverDisappearVfx.GetComponentsInChildren<ParticleSystem>(true);
+        for (int i = 0; i < particleSystems.Length; i++)
+        {
+            particleSystems[i].gameObject.SetActive(true);
+            particleSystems[i].Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            particleSystems[i].Play(true);
+        }
+    }
+
+    private void ResolveCoverDisappearVfx()
+    {
+        if (coverDisappearVfx != null)
+        {
+            return;
+        }
+
+        ParticleSystem particleSystem = GetComponentInChildren<ParticleSystem>(true);
+        if (particleSystem != null)
+        {
+            coverDisappearVfx = particleSystem.gameObject;
+            return;
+        }
+
+        Transform[] children = GetComponentsInChildren<Transform>(true);
+        for (int i = 0; i < children.Length; i++)
+        {
+            if (children[i] == transform)
+            {
+                continue;
+            }
+
+            string childName = children[i].name.ToLowerInvariant();
+            if (childName.Contains("vfx") || childName.Contains("effect"))
+            {
+                coverDisappearVfx = children[i].gameObject;
+                return;
+            }
+        }
     }
 
     private void EnsureTapCollider()

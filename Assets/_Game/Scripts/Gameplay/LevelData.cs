@@ -36,10 +36,12 @@ public class LevelColumnData
     [SerializeField] private List<bool> coveredBlocks = new List<bool>();
     [SerializeField] private bool hasAcceptedColor;
     [SerializeField] private BlockColorId acceptedColor = BlockColorId.Red;
+    [SerializeField, Min(0)] private int freezeUnlockColumnCount;
 
     public IReadOnlyList<BlockColorId> Blocks => blocks;
     public bool HasAcceptedColor => hasAcceptedColor;
     public BlockColorId AcceptedColor => acceptedColor;
+    public int FreezeUnlockColumnCount => Mathf.Max(0, freezeUnlockColumnCount);
 
     public List<BlockColorId> GetMutableBlocks()
     {
@@ -62,6 +64,11 @@ public class LevelColumnData
     {
         hasAcceptedColor = enabled;
         acceptedColor = colorId;
+    }
+
+    public void SetFreezeUnlockColumnCount(int unlockColumnCount)
+    {
+        freezeUnlockColumnCount = Mathf.Max(0, unlockColumnCount);
     }
 
     public void EnsureCoverSize()

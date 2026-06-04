@@ -12,15 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47c94bf79eee84adcb0a66880f881800, type: 3}
   m_Name: Level_2
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
-  maxMoves: 20
-  trayColor: 0
+  maxMoves: 30
+  trayColor: 2
   columns:
-  - blocks: 0100000002000000030000000100000002000000
+  - blocks: 0200000002000000020000000200000004000000
+    coveredBlocks: 
     hasAcceptedColor: 0
     acceptedColor: 0
-  - blocks: 0100000003000000010000000200000003000000
+  - blocks: 0a0000000a000000090000000a0000000a000000
+    coveredBlocks: 
     hasAcceptedColor: 0
     acceptedColor: 0
-  - blocks: 0100000003000000030000000200000002000000
+  - blocks: 040000000400000004000000040000000b000000
+    coveredBlocks: 
+    hasAcceptedColor: 0
+    acceptedColor: 0
+  - blocks: 0b0000000b0000000b0000000b0000000a000000
+    coveredBlocks: 
     hasAcceptedColor: 0
     acceptedColor: 0

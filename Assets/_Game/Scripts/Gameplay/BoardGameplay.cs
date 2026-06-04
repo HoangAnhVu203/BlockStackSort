@@ -10,8 +10,13 @@ public class BoardGameplay : MonoBehaviour
     private const string YellowPrefabPath = "Assets/_Game/Prefabs/Block/BlockYellow.prefab";
     private const string GreenPrefabPath = "Assets/_Game/Prefabs/Block/BlocGreen.prefab";
     private const string WhitePrefabPath = "Assets/_Game/Prefabs/Block/BlockWhite.prefab";
+    private const string PinkPrefabPath = "Assets/_Game/Prefabs/Block/BlockPink.prefab";
     private const string BlackPrefabPath = "Assets/_Game/Prefabs/Block/BlocBlack.prefab";
+    private const string BrownPrefabPath = "Assets/_Game/Prefabs/Block/BlockBrown.prefab";
+    private const string PurplePrefabPath = "Assets/_Game/Prefabs/Block/BlockPurple.prefab";
     private const string BlueSkyPrefabPath = "Assets/_Game/Prefabs/Block/BlockBlueSky.prefab";
+    private const string RainbowPrefabPath = "Assets/_Game/Prefabs/Block/BlockRainbow.prefab";
+    private const string BluePrefabPath = "Assets/_Game/Prefabs/Block/BlockBlue.prefab";
     private const string OrangePrefabPath = "Assets/_Game/Prefabs/Block/BlockOrange.prefab";
 
     [Header("Scene")]
@@ -38,9 +43,20 @@ public class BoardGameplay : MonoBehaviour
     [SerializeField] private GameObject yellowBlockPrefab;
     [SerializeField] private GameObject greenBlockPrefab;
     [SerializeField] private GameObject whiteBlockPrefab;
+    [SerializeField] private GameObject pinkBlockPrefab;
     [SerializeField] private GameObject blackBlockPrefab;
+    [SerializeField] private GameObject brownBlockPrefab;
+    [SerializeField] private GameObject purpleBlockPrefab;
     [SerializeField] private GameObject blueSkyBlockPrefab;
+    [SerializeField] private GameObject rainbowBlockPrefab;
+    [SerializeField] private GameObject blueBlockPrefab;
     [SerializeField] private GameObject orangeBlockPrefab;
+
+    [Header("Freeze Counter")]
+    [SerializeField] private Font freezeCounterFont;
+    [SerializeField] private float freezeCounterCharacterSize = 0.22f;
+    [SerializeField] private int freezeCounterFontSize = 48;
+    [SerializeField] private Color freezeCounterColor = Color.black;
 
     [Header("Animation")]
     [SerializeField] private float trayToColumnDuration = 0.25f;
@@ -207,8 +223,13 @@ public class BoardGameplay : MonoBehaviour
         yellowBlockPrefab = yellowBlockPrefab != null ? yellowBlockPrefab : LoadEditorBlockPrefab(YellowPrefabPath);
         greenBlockPrefab = greenBlockPrefab != null ? greenBlockPrefab : LoadEditorBlockPrefab(GreenPrefabPath);
         whiteBlockPrefab = whiteBlockPrefab != null ? whiteBlockPrefab : LoadEditorBlockPrefab(WhitePrefabPath);
+        pinkBlockPrefab = pinkBlockPrefab != null ? pinkBlockPrefab : LoadEditorBlockPrefab(PinkPrefabPath);
         blackBlockPrefab = blackBlockPrefab != null ? blackBlockPrefab : LoadEditorBlockPrefab(BlackPrefabPath);
+        brownBlockPrefab = brownBlockPrefab != null ? brownBlockPrefab : LoadEditorBlockPrefab(BrownPrefabPath);
+        purpleBlockPrefab = purpleBlockPrefab != null ? purpleBlockPrefab : LoadEditorBlockPrefab(PurplePrefabPath);
         blueSkyBlockPrefab = blueSkyBlockPrefab != null ? blueSkyBlockPrefab : LoadEditorBlockPrefab(BlueSkyPrefabPath);
+        rainbowBlockPrefab = rainbowBlockPrefab != null ? rainbowBlockPrefab : LoadEditorBlockPrefab(RainbowPrefabPath);
+        blueBlockPrefab = blueBlockPrefab != null ? blueBlockPrefab : LoadEditorBlockPrefab(BluePrefabPath);
         orangeBlockPrefab = orangeBlockPrefab != null ? orangeBlockPrefab : LoadEditorBlockPrefab(OrangePrefabPath);
 #endif
     }
@@ -805,6 +826,7 @@ public class BoardGameplay : MonoBehaviour
         {
             ColumnView column = columns[columnIndex];
             column.SetAcceptedColorRule(false, BlockColorId.Red);
+            ConfigureColumnFreeze(column, 0);
 
             if (columnIndex >= levelColumns.Count)
             {
@@ -814,6 +836,7 @@ public class BoardGameplay : MonoBehaviour
 
             LevelColumnData columnData = levelColumns[columnIndex];
             column.SetAcceptedColorRule(columnData.HasAcceptedColor, columnData.AcceptedColor);
+            ConfigureColumnFreeze(column, columnData.FreezeUnlockColumnCount);
 
             List<BlockView> spawnedBlocks = new List<BlockView>();
             int spawnCount = Mathf.Min(column.SlotCount, columnData.Blocks.Count);
@@ -837,6 +860,16 @@ public class BoardGameplay : MonoBehaviour
         trayBlock = CreateBlock(levelData.TrayColor, traySlot, false);
         trayBlock.transform.position = traySlot.position;
         trayBlock.transform.localScale = Vector3.one;
+    }
+
+    private void ConfigureColumnFreeze(ColumnView column, int unlockColumnCount)
+    {
+        column.ConfigureFreezeLock(
+            unlockColumnCount,
+            freezeCounterFont,
+            freezeCounterCharacterSize,
+            freezeCounterFontSize,
+            freezeCounterColor);
     }
 
     private void ShuffleColumnsAnimated(List<ColumnView> shuffleColumns, bool clearHistory)
@@ -1081,12 +1114,14 @@ public class BoardGameplay : MonoBehaviour
     {
         EnsureSolvedColumnStateSize();
         EnsureBottomBlockStateSize();
+        int solvedUnlockColumnCount = CountSolvedUnlockColumns();
         bool canPlaySolvedWave = solvedColumnStatesInitialized && !IsBoardSolved();
 
         for (int i = 0; i < columns.Count; i++)
         {
+            columns[i].UpdateFreezeLock(solvedUnlockColumnCount);
             bool isSolved = columns[i].IsSolved();
-            columns[i].SetLocked(isSolved);
+            columns[i].SetLocked(isSolved || columns[i].IsFreezeLocked);
 
             if (canPlaySolvedWave && isSolved && !solvedColumnStates[i])
             {
@@ -1098,6 +1133,20 @@ public class BoardGameplay : MonoBehaviour
         }
 
         solvedColumnStatesInitialized = true;
+    }
+
+    private int CountSolvedUnlockColumns()
+    {
+        int count = 0;
+        for (int i = 0; i < columns.Count; i++)
+        {
+            if (columns[i].IsSolved() && !columns[i].IsFreezeLocked)
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     private void EnsureSolvedColumnStateSize()
@@ -1536,10 +1585,20 @@ public class BoardGameplay : MonoBehaviour
                 return greenBlockPrefab != null ? greenBlockPrefab : redBlockPrefab;
             case BlockColorId.White:
                 return whiteBlockPrefab != null ? whiteBlockPrefab : redBlockPrefab;
+            case BlockColorId.Pink:
+                return pinkBlockPrefab != null ? pinkBlockPrefab : redBlockPrefab;
             case BlockColorId.Black:
                 return blackBlockPrefab != null ? blackBlockPrefab : redBlockPrefab;
+            case BlockColorId.Brown:
+                return brownBlockPrefab != null ? brownBlockPrefab : redBlockPrefab;
+            case BlockColorId.Purple:
+                return purpleBlockPrefab != null ? purpleBlockPrefab : redBlockPrefab;
             case BlockColorId.BlueSky:
                 return blueSkyBlockPrefab != null ? blueSkyBlockPrefab : redBlockPrefab;
+            case BlockColorId.RainBow:
+                return rainbowBlockPrefab != null ? rainbowBlockPrefab : redBlockPrefab;
+            case BlockColorId.Blue:
+                return blueBlockPrefab != null ? blueBlockPrefab : redBlockPrefab;
             case BlockColorId.Orange:
                 return orangeBlockPrefab != null ? orangeBlockPrefab : redBlockPrefab;
             default:
