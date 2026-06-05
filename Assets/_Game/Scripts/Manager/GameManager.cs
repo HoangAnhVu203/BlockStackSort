@@ -198,7 +198,7 @@ public sealed class GameManager : Singleton<GameManager>
         ResolveWinParticles();
         for (int i = 0; i < winParticles.Length; i++)
         {
-            if (winParticles[i] == null)
+            if (winParticles[i] == null || IsGameplayBlockParticle(winParticles[i]))
             {
                 continue;
             }
@@ -220,13 +220,37 @@ public sealed class GameManager : Singleton<GameManager>
         var particles = new System.Collections.Generic.List<ParticleSystem>();
         for (int i = 0; i < sceneParticles.Length && particles.Count < 2; i++)
         {
-            if (sceneParticles[i] != null && sceneParticles[i].gameObject.scene.IsValid())
+            if (IsValidAutoWinParticle(sceneParticles[i]))
             {
                 particles.Add(sceneParticles[i]);
             }
         }
 
         winParticles = particles.ToArray();
+    }
+
+    private bool IsValidAutoWinParticle(ParticleSystem particleSystem)
+    {
+        if (particleSystem == null || !particleSystem.gameObject.scene.IsValid())
+        {
+            return false;
+        }
+
+        if (IsGameplayBlockParticle(particleSystem))
+        {
+            return false;
+        }
+
+        string particleName = particleSystem.name.ToLowerInvariant();
+        return particleName.Contains("win")
+            || particleName.Contains("confetti")
+            || particleName.Contains("celebrate")
+            || particleName.Contains("bling");
+    }
+
+    private bool IsGameplayBlockParticle(ParticleSystem particleSystem)
+    {
+        return particleSystem != null && particleSystem.GetComponentInParent<BlockView>(true) != null;
     }
 
     private void StopWinSequence()

@@ -85,7 +85,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7400350130367402042, guid: 9b0c724d204744cf7957d47f08d4aff0, type: 3}
+  m_Sprite: {fileID: -7441625864295852036, guid: 2ddbdc002175549ca80e0189af9726e0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -112,6 +112,7 @@ MonoBehaviour:
   coverSprite: {fileID: 0}
   coverBurnDuration: 0.25
   coverDisappearVfx: {fileID: 0}
+  freezeRenderer: {fileID: 0}
 --- !u!1 &9187741729321874783
 GameObject:
   m_ObjectHideFlags: 0
@@ -193,7 +194,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -1593477784551811952, guid: cbeee4b774c07456993f54e2677ea8b5, type: 3}
+  m_Sprite: {fileID: 1655921489673168708, guid: 0e22f322f88ce41288aa80e4cd1bdf04, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

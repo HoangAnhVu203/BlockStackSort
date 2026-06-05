@@ -8,6 +8,13 @@ public class PanelGameplay : UICanvas
     [SerializeField] private Button shuffleBlockBtn;
     [SerializeField] private Button magnetBlockBtn;
 
+    [Header("Item Uses")]
+    [SerializeField, Min(0)] private int startingFreeItemUses = 1;
+    [SerializeField] private Text rollBackItemText;
+    [SerializeField] private Text shuffleItemText;
+    [SerializeField] private Text magnetItemText;
+    [SerializeField] private string addItemText = "+";
+
     [Header("Level Info")]
     [SerializeField] private Text levelText;
     [SerializeField] private Text moveText;
@@ -36,13 +43,18 @@ public class PanelGameplay : UICanvas
     private bool isSettingMenuOpen;
     private Vector2[] settingItemClosedPositions;
     private Vector2[] settingItemOpenedPositions;
+    private int rollBackItemUses;
+    private int shuffleItemUses;
+    private int magnetItemUses;
 
     private void OnEnable()
     {
         ResolveReferences();
+        ResetItemUses();
         PrepareSettingMenu();
         RefreshSettingIcons();
         RefreshLevelMoveInfo();
+        RefreshItemUseTexts();
 
         if (rollBackBlockBtn != null)
         {
@@ -137,7 +149,10 @@ public class PanelGameplay : UICanvas
             && vibrationBtn != null
             && goHomeBtn != null
             && levelText != null
-            && moveText != null)
+            && moveText != null
+            && rollBackItemText != null
+            && shuffleItemText != null
+            && magnetItemText != null)
         {
             return;
         }
@@ -193,6 +208,7 @@ public class PanelGameplay : UICanvas
         soundIcon = soundIcon != null || soundBtn == null ? soundIcon : soundBtn.GetComponent<Image>();
         vibrationIcon = vibrationIcon != null || vibrationBtn == null ? vibrationIcon : vibrationBtn.GetComponent<Image>();
         ResolveInfoTexts();
+        ResolveItemTexts();
 
         if (settingIcon == null && settingBtn != null)
         {
@@ -313,6 +329,63 @@ public class PanelGameplay : UICanvas
         {
             targetText.text = value;
         }
+    }
+
+    private void ResolveItemTexts()
+    {
+        rollBackItemText = rollBackItemText != null ? rollBackItemText : FindButtonText(rollBackBlockBtn);
+        shuffleItemText = shuffleItemText != null ? shuffleItemText : FindButtonText(shuffleBlockBtn);
+        magnetItemText = magnetItemText != null ? magnetItemText : FindButtonText(magnetBlockBtn);
+    }
+
+    private Text FindButtonText(Button button)
+    {
+        if (button == null)
+        {
+            return null;
+        }
+
+        Text[] texts = button.GetComponentsInChildren<Text>(true);
+        return texts.Length > 0 ? texts[0] : null;
+    }
+
+    private void ResetItemUses()
+    {
+        int freeUses = Mathf.Max(0, startingFreeItemUses);
+        rollBackItemUses = freeUses;
+        shuffleItemUses = freeUses;
+        magnetItemUses = freeUses;
+    }
+
+    private void RefreshItemUseTexts()
+    {
+        ResolveItemTexts();
+        SetItemUseText(rollBackItemText, rollBackItemUses);
+        SetItemUseText(shuffleItemText, shuffleItemUses);
+        SetItemUseText(magnetItemText, magnetItemUses);
+    }
+
+    private void SetItemUseText(Text targetText, int uses)
+    {
+        SetText(targetText, uses > 0 ? uses.ToString() : addItemText);
+    }
+
+    private bool TrySpendItemUse(ref int uses)
+    {
+        if (uses <= 0)
+        {
+            uses = 1;
+            RefreshItemUseTexts();
+            return false;
+        }
+
+        return true;
+    }
+
+    private void ConsumeItemUse(ref int uses)
+    {
+        uses = Mathf.Max(0, uses - 1);
+        RefreshItemUseTexts();
     }
 
     private void ResolveSettingMenuItems()
@@ -469,30 +542,45 @@ public class PanelGameplay : UICanvas
     private void HandleRollBackBlockClicked()
     {
         PlayButtonFeedback();
-        BoardGameplay boardGameplay = FindFirstObjectByType<BoardGameplay>();
-        if (boardGameplay != null)
+        if (!TrySpendItemUse(ref rollBackItemUses))
         {
-            boardGameplay.RollbackLastMove();
+            return;
+        }
+
+        BoardGameplay boardGameplay = FindFirstObjectByType<BoardGameplay>();
+        if (boardGameplay != null && boardGameplay.RollbackLastMove())
+        {
+            ConsumeItemUse(ref rollBackItemUses);
         }
     }
 
     private void HandleShuffleBlockClicked()
     {
         PlayButtonFeedback();
-        BoardGameplay boardGameplay = FindFirstObjectByType<BoardGameplay>();
-        if (boardGameplay != null)
+        if (!TrySpendItemUse(ref shuffleItemUses))
         {
-            boardGameplay.ShuffleBlocks();
+            return;
+        }
+
+        BoardGameplay boardGameplay = FindFirstObjectByType<BoardGameplay>();
+        if (boardGameplay != null && boardGameplay.ShuffleBlocks())
+        {
+            ConsumeItemUse(ref shuffleItemUses);
         }
     }
 
     private void HandleMagnetBlockClicked()
     {
         PlayButtonFeedback();
-        BoardGameplay boardGameplay = FindFirstObjectByType<BoardGameplay>();
-        if (boardGameplay != null)
+        if (!TrySpendItemUse(ref magnetItemUses))
         {
-            boardGameplay.ActivateMagnetMode();
+            return;
+        }
+
+        BoardGameplay boardGameplay = FindFirstObjectByType<BoardGameplay>();
+        if (boardGameplay != null && boardGameplay.ActivateMagnetMode())
+        {
+            ConsumeItemUse(ref magnetItemUses);
         }
     }
 }

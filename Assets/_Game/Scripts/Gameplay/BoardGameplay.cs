@@ -38,6 +38,16 @@ public class BoardGameplay : MonoBehaviour
     [SerializeField] private Vector2 boardLimitCenter = new Vector2(0f, 0.6f);
     [SerializeField] private Vector2 boardLimitSize = new Vector2(4f, 5f);
 
+    [Header("Only Color Indicator")]
+    [SerializeField] private Sprite onlyColorIndicatorSprite;
+    [SerializeField] private Color onlyColorNeutralColor = new Color(0.7f, 0.7f, 0.7f, 1f);
+    [SerializeField] private Vector2 onlyColorIndicatorOffset = new Vector2(0f, 0.62f);
+    [SerializeField] private Vector2 onlyColorIndicatorScale = new Vector2(0.22f, 0.22f);
+    [SerializeField] private Sprite onlyColorStatusNormalSprite;
+    [SerializeField] private Sprite onlyColorStatusSolvedSprite;
+    [SerializeField] private Vector2 onlyColorStatusOffset = new Vector2(0.18f, 0.18f);
+    [SerializeField] private Vector2 onlyColorStatusScale = new Vector2(0.45f, 0.45f);
+
     [Header("Prefabs")]
     [SerializeField] private GameObject redBlockPrefab;
     [SerializeField] private GameObject yellowBlockPrefab;
@@ -278,6 +288,7 @@ public class BoardGameplay : MonoBehaviour
         for (int columnIndex = 0; columnIndex < columns.Count; columnIndex++)
         {
             ColumnView column = columns[columnIndex];
+            ConfigureColumnAcceptedColor(column, false, BlockColorId.Red);
             List<BlockView> spawnedBlocks = new List<BlockView>();
 
             for (int slotIndex = 0; slotIndex < column.SlotCount; slotIndex++)
@@ -528,11 +539,11 @@ public class BoardGameplay : MonoBehaviour
         });
     }
 
-    public void RollbackLastMove()
+    public bool RollbackLastMove()
     {
         if (isAnimating || moveHistory.Count == 0)
         {
-            return;
+            return false;
         }
 
         MoveRecord moveRecord = moveHistory.Pop();
@@ -563,29 +574,38 @@ public class BoardGameplay : MonoBehaviour
             RefreshLockedColumns();
             NotifyGameplayPanelChanged();
         });
+
+        return true;
     }
 
-    public void ShuffleBlocks()
+    public bool ShuffleBlocks()
     {
         if (isAnimating || hasWon)
         {
-            return;
+            return false;
         }
 
-        ShuffleColumnsAnimated(GetUnsolvedColumns(null), true);
+        List<ColumnView> shuffleColumns = GetUnsolvedColumns(null);
+        if (shuffleColumns.Count == 0)
+        {
+            return false;
+        }
+
+        ShuffleColumnsAnimated(shuffleColumns, true);
+        return true;
     }
 
-    public void ActivateMagnetMode()
+    public bool ActivateMagnetMode()
     {
         if (isAnimating || hasWon || isMagnetMode)
         {
-            return;
+            return false;
         }
 
         List<ColumnView> unsolvedColumns = GetUnsolvedColumns(null);
         if (unsolvedColumns.Count == 0)
         {
-            return;
+            return false;
         }
 
         isMagnetMode = true;
@@ -607,6 +627,8 @@ public class BoardGameplay : MonoBehaviour
                 gameManager.WinLevel();
             }
         });
+
+        return true;
     }
 
     private void TryClickBoard(Vector2 screenPosition)
@@ -825,7 +847,7 @@ public class BoardGameplay : MonoBehaviour
         for (int columnIndex = 0; columnIndex < columns.Count; columnIndex++)
         {
             ColumnView column = columns[columnIndex];
-            column.SetAcceptedColorRule(false, BlockColorId.Red);
+            ConfigureColumnAcceptedColor(column, false, BlockColorId.Red);
             ConfigureColumnFreeze(column, 0);
 
             if (columnIndex >= levelColumns.Count)
@@ -835,7 +857,7 @@ public class BoardGameplay : MonoBehaviour
             }
 
             LevelColumnData columnData = levelColumns[columnIndex];
-            column.SetAcceptedColorRule(columnData.HasAcceptedColor, columnData.AcceptedColor);
+            ConfigureColumnAcceptedColor(column, columnData.HasAcceptedColor, columnData.AcceptedColor);
             ConfigureColumnFreeze(column, columnData.FreezeUnlockColumnCount);
 
             List<BlockView> spawnedBlocks = new List<BlockView>();
@@ -860,6 +882,20 @@ public class BoardGameplay : MonoBehaviour
         trayBlock = CreateBlock(levelData.TrayColor, traySlot, false);
         trayBlock.transform.position = traySlot.position;
         trayBlock.transform.localScale = Vector3.one;
+    }
+
+    private void ConfigureColumnAcceptedColor(ColumnView column, bool hasAcceptedColor, BlockColorId acceptedColor)
+    {
+        column.SetAcceptedColorRule(hasAcceptedColor, acceptedColor);
+        Color indicatorColor = hasAcceptedColor ? GetIndicatorColor(acceptedColor) : onlyColorNeutralColor;
+        column.SetOnlyColorIndicator(
+            onlyColorIndicatorSprite,
+            indicatorColor,
+            onlyColorIndicatorOffset,
+            onlyColorIndicatorScale,
+            onlyColorStatusNormalSprite,
+            onlyColorStatusOffset,
+            onlyColorStatusScale);
     }
 
     private void ConfigureColumnFreeze(ColumnView column, int unlockColumnCount)
@@ -1122,6 +1158,12 @@ public class BoardGameplay : MonoBehaviour
             columns[i].UpdateFreezeLock(solvedUnlockColumnCount);
             bool isSolved = columns[i].IsSolved();
             columns[i].SetLocked(isSolved || columns[i].IsFreezeLocked);
+            columns[i].SetOnlyColorStatusSolved(
+                isSolved,
+                onlyColorStatusNormalSprite,
+                onlyColorStatusSolvedSprite,
+                onlyColorStatusOffset,
+                onlyColorStatusScale);
 
             if (canPlaySolvedWave && isSolved && !solvedColumnStates[i])
             {
@@ -1603,6 +1645,39 @@ public class BoardGameplay : MonoBehaviour
                 return orangeBlockPrefab != null ? orangeBlockPrefab : redBlockPrefab;
             default:
                 return redBlockPrefab;
+        }
+    }
+
+    private Color GetIndicatorColor(BlockColorId colorId)
+    {
+        switch (colorId)
+        {
+            case BlockColorId.Red:
+                return new Color(1f, 0.12f, 0.02f, 1f);
+            case BlockColorId.Yellow:
+                return new Color(1f, 0.9f, 0f, 1f);
+            case BlockColorId.Green:
+                return new Color(0f, 0.95f, 0.12f, 1f);
+            case BlockColorId.White:
+                return Color.white;
+            case BlockColorId.Pink:
+                return new Color(1f, 0.35f, 0.75f, 1f);
+            case BlockColorId.Black:
+                return Color.black;
+            case BlockColorId.Brown:
+                return new Color(0.45f, 0.22f, 0.08f, 1f);
+            case BlockColorId.Purple:
+                return new Color(0.45f, 0.15f, 0.9f, 1f);
+            case BlockColorId.BlueSky:
+                return new Color(0.2f, 0.75f, 1f, 1f);
+            case BlockColorId.RainBow:
+                return Color.magenta;
+            case BlockColorId.Blue:
+                return new Color(0.05f, 0.25f, 1f, 1f);
+            case BlockColorId.Orange:
+                return new Color(1f, 0.45f, 0f, 1f);
+            default:
+                return onlyColorNeutralColor;
         }
     }
 

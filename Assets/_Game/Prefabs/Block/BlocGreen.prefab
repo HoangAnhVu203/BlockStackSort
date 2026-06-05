@@ -81,7 +81,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -1593477784551811952, guid: cbeee4b774c07456993f54e2677ea8b5, type: 3}
+  m_Sprite: {fileID: 1655921489673168708, guid: 0e22f322f88ce41288aa80e4cd1bdf04, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -176,7 +176,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -6099873399732076034, guid: 0487525ea79144d9ab23b418768f3753, type: 3}
+  m_Sprite: {fileID: -6099873399732076034, guid: 1481554fd374e484d93962e3cc2a019a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -203,6 +203,7 @@ MonoBehaviour:
   coverSprite: {fileID: 0}
   coverBurnDuration: 0.25
   coverDisappearVfx: {fileID: 0}
+  freezeRenderer: {fileID: 0}
 --- !u!1001 &5932100644653275313
 PrefabInstance:
   m_ObjectHideFlags: 0

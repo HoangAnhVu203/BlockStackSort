@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47c94bf79eee84adcb0a66880f881800, type: 3}
+  m_Name: Level_34
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  maxMoves: 50
+  trayColor: 0
+  columns:
+  - blocks: 07000000020000000a00000007000000040000000600000008000000
+    coveredBlocks: 00000000000000
+    hasAcceptedColor: 1
+    acceptedColor: 4
+    freezeUnlockColumnCount: 0
+  - blocks: 08000000060000000800000006000000070000000900000007000000
+    coveredBlocks: 00000000000000
+    hasAcceptedColor: 0
+    acceptedColor: 1
+    freezeUnlockColumnCount: 0
+  - blocks: 00000000070000000a0000000600000004000000020000000a000000
+    coveredBlocks: 00000000000000
+    hasAcceptedColor: 0
+    acceptedColor: 1
+    freezeUnlockColumnCount: 0
+  - blocks: 02000000020000000700000008000000060000000800000004000000
+    coveredBlocks: 00000000000000
+    hasAcceptedColor: 0
+    acceptedColor: 1
+    freezeUnlockColumnCount: 0
+  - blocks: 00000000040000000000000002000000040000000a00000006000000
+    coveredBlocks: 00000000000000
+    hasAcceptedColor: 0
+    acceptedColor: 1
+    freezeUnlockColumnCount: 0
+  - blocks: 06000000000000000800000004000000080000000a00000002000000
+    coveredBlocks: 00000000000000
+    hasAcceptedColor: 1
+    acceptedColor: 6
+    freezeUnlockColumnCount: 0
+  - blocks: 0a0000000a0000000000000002000000000000000700000004000000
+    coveredBlocks: 00000000000000
+    hasAcceptedColor: 0
+    acceptedColor: 1
+    freezeUnlockColumnCount: 0

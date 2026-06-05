@@ -12,6 +12,8 @@ public class ColumnView : MonoBehaviour
     [SerializeField] private float freezeCounterCharacterSize = 0.22f;
     [SerializeField] private int freezeCounterFontSize = 48;
     [SerializeField] private Color freezeCounterColor = Color.black;
+    [SerializeField] private SpriteRenderer onlyColorIndicator;
+    [SerializeField] private SpriteRenderer onlyColorStatusIndicator;
 
     public event Action<ColumnView> Clicked;
 
@@ -48,6 +50,44 @@ public class ColumnView : MonoBehaviour
     {
         hasAcceptedColor = enabled;
         acceptedColor = colorId;
+    }
+
+    public void SetOnlyColorIndicator(
+        Sprite indicatorSprite,
+        Color indicatorColor,
+        Vector2 localOffset,
+        Vector2 localScale,
+        Sprite statusSprite,
+        Vector2 statusLocalOffset,
+        Vector2 statusLocalScale)
+    {
+        ResolveOnlyColorIndicator(indicatorSprite);
+        if (onlyColorIndicator == null)
+        {
+            return;
+        }
+
+        onlyColorIndicator.sprite = indicatorSprite;
+        onlyColorIndicator.color = indicatorColor;
+        onlyColorIndicator.transform.localPosition = GetIndicatorLocalPosition(localOffset);
+        onlyColorIndicator.transform.localScale = new Vector3(localScale.x, localScale.y, 1f);
+        onlyColorIndicator.sortingOrder = 35;
+        onlyColorIndicator.gameObject.SetActive(indicatorSprite != null);
+
+        ResolveOnlyColorStatusIndicator(statusSprite);
+        SetOnlyColorStatusIndicator(statusSprite, statusLocalOffset, statusLocalScale);
+    }
+
+    public void SetOnlyColorStatusSolved(
+        bool isSolved,
+        Sprite normalSprite,
+        Sprite solvedSprite,
+        Vector2 statusLocalOffset,
+        Vector2 statusLocalScale)
+    {
+        Sprite targetSprite = isSolved && solvedSprite != null ? solvedSprite : normalSprite;
+        ResolveOnlyColorStatusIndicator(targetSprite);
+        SetOnlyColorStatusIndicator(targetSprite, statusLocalOffset, statusLocalScale);
     }
 
     public void ConfigureFreezeLock(
@@ -98,7 +138,8 @@ public class ColumnView : MonoBehaviour
 
     public bool CanAccept(BlockColorId colorId)
     {
-        return !isFreezeLocked && (!hasAcceptedColor || acceptedColor == colorId);
+        return !isFreezeLocked
+            && (!hasAcceptedColor || acceptedColor == colorId || colorId == BlockColorId.RainBow);
     }
 
     public bool ContainsBlock(BlockView targetBlock)
@@ -609,6 +650,95 @@ public class ColumnView : MonoBehaviour
         Vector2 slotSize = GetSlotSize();
         bounds.Expand(new Vector3(slotSize.x, slotSize.y, 0f));
         return bounds;
+    }
+
+    private void ResolveOnlyColorIndicator(Sprite indicatorSprite)
+    {
+        if (onlyColorIndicator != null)
+        {
+            return;
+        }
+
+        SpriteRenderer[] spriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);
+        for (int i = 0; i < spriteRenderers.Length; i++)
+        {
+            string childName = spriteRenderers[i].name.ToLowerInvariant();
+            if (childName.Contains("onlycolorindicator") || childName.Contains("onlyindicator"))
+            {
+                onlyColorIndicator = spriteRenderers[i];
+                return;
+            }
+        }
+
+        if (indicatorSprite == null)
+        {
+            return;
+        }
+
+        GameObject indicatorObject = new GameObject("OnlyColorIndicator");
+        indicatorObject.transform.SetParent(transform, false);
+        onlyColorIndicator = indicatorObject.AddComponent<SpriteRenderer>();
+    }
+
+    private void ResolveOnlyColorStatusIndicator(Sprite statusSprite)
+    {
+        if (onlyColorStatusIndicator != null)
+        {
+            return;
+        }
+
+        if (onlyColorIndicator != null)
+        {
+            SpriteRenderer[] childRenderers = onlyColorIndicator.GetComponentsInChildren<SpriteRenderer>(true);
+            for (int i = 0; i < childRenderers.Length; i++)
+            {
+                if (childRenderers[i] == onlyColorIndicator)
+                {
+                    continue;
+                }
+
+                string childName = childRenderers[i].name.ToLowerInvariant();
+                if (childName.Contains("onlycolorstatus") || childName.Contains("statusindicator"))
+                {
+                    onlyColorStatusIndicator = childRenderers[i];
+                    return;
+                }
+            }
+        }
+
+        if (statusSprite == null || onlyColorIndicator == null)
+        {
+            return;
+        }
+
+        GameObject statusObject = new GameObject("OnlyColorStatusIndicator");
+        statusObject.transform.SetParent(onlyColorIndicator.transform, false);
+        onlyColorStatusIndicator = statusObject.AddComponent<SpriteRenderer>();
+    }
+
+    private void SetOnlyColorStatusIndicator(Sprite statusSprite, Vector2 statusLocalOffset, Vector2 statusLocalScale)
+    {
+        if (onlyColorStatusIndicator == null)
+        {
+            return;
+        }
+
+        onlyColorStatusIndicator.sprite = statusSprite;
+        onlyColorStatusIndicator.color = Color.white;
+        onlyColorStatusIndicator.transform.localPosition = new Vector3(statusLocalOffset.x, statusLocalOffset.y, 0f);
+        onlyColorStatusIndicator.transform.localScale = new Vector3(statusLocalScale.x, statusLocalScale.y, 1f);
+        onlyColorStatusIndicator.sortingOrder = 36;
+        onlyColorStatusIndicator.gameObject.SetActive(statusSprite != null);
+    }
+
+    private Vector3 GetIndicatorLocalPosition(Vector2 localOffset)
+    {
+        if (slots.Count == 0)
+        {
+            return new Vector3(localOffset.x, localOffset.y, 0f);
+        }
+
+        return slots[0].localPosition + new Vector3(localOffset.x, localOffset.y, 0f);
     }
 
     private void SnapBlocksToSlots()
