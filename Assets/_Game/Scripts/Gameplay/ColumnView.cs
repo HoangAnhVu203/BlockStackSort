@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class ColumnView : MonoBehaviour
 {
+    private const int OnlyColorIndicatorSortingOrder = 8;
+    private const int OnlyColorStatusIndicatorSortingOrder = 9;
+
     [SerializeField] private List<Transform> slots = new List<Transform>();
     [SerializeField] private SpriteRenderer freezeOverlay;
     [SerializeField] private TextMesh freezeCounterText;
@@ -71,7 +74,7 @@ public class ColumnView : MonoBehaviour
         onlyColorIndicator.color = indicatorColor;
         onlyColorIndicator.transform.localPosition = GetIndicatorLocalPosition(localOffset);
         onlyColorIndicator.transform.localScale = new Vector3(localScale.x, localScale.y, 1f);
-        onlyColorIndicator.sortingOrder = 35;
+        onlyColorIndicator.sortingOrder = OnlyColorIndicatorSortingOrder;
         onlyColorIndicator.gameObject.SetActive(indicatorSprite != null);
 
         ResolveOnlyColorStatusIndicator(statusSprite);
@@ -727,7 +730,7 @@ public class ColumnView : MonoBehaviour
         onlyColorStatusIndicator.color = Color.white;
         onlyColorStatusIndicator.transform.localPosition = new Vector3(statusLocalOffset.x, statusLocalOffset.y, 0f);
         onlyColorStatusIndicator.transform.localScale = new Vector3(statusLocalScale.x, statusLocalScale.y, 1f);
-        onlyColorStatusIndicator.sortingOrder = 36;
+        onlyColorStatusIndicator.sortingOrder = OnlyColorStatusIndicatorSortingOrder;
         onlyColorStatusIndicator.gameObject.SetActive(statusSprite != null);
     }
 

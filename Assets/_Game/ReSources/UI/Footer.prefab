@@ -130,7 +130,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 100}
-  m_SizeDelta: {x: 150, y: 150}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8027350305163288104
 CanvasRenderer:
@@ -160,7 +160,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1885097426596167257, guid: cf5e0b47ddf30443ebef2c9eb451a468, type: 3}
+  m_Sprite: {fileID: 8948658748688611827, guid: d17d1e70223d34095a4b83e4986655b6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -249,7 +249,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Rank
+  m_Text: Shop
 --- !u!114 &2097692976322434872
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -334,7 +334,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -7473025768191847280, guid: fccfe6f24fadf4676b37f359d1e14bc2, type: 3}
+  m_Sprite: {fileID: -7706694372642860905, guid: 917d07725bcb84aa4b021f29c3b5a8aa, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -357,30 +357,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FooterTabBar
   isDestroyOnClose: 0
-  selection: {fileID: 8251656379029792549}
-  selectionParent: {fileID: 8424192194434458904}
   tabs:
   - button: {fileID: 8318367949885382857}
     root: {fileID: 7622826476002062720}
     icon: {fileID: 4099248995500188931}
     labelGO: {fileID: 2305198829723622665}
+    targetImage: {fileID: 7001585884883931679}
+    normalSprite: {fileID: -6222199842612748360, guid: b630e609f9d214587943a9e1abd87062, type: 3}
+    selectedSprite: {fileID: 3939620569157023844, guid: b0534b1956b8b43c4be530b17ad0358e, type: 3}
   - button: {fileID: 6757455720172723464}
     root: {fileID: 1440338448340602000}
     icon: {fileID: 8561935584774288130}
     labelGO: {fileID: 561585351743109353}
+    targetImage: {fileID: 292147980632408042}
+    normalSprite: {fileID: 8948658748688611827, guid: d17d1e70223d34095a4b83e4986655b6, type: 3}
+    selectedSprite: {fileID: 3272501538999977076, guid: 95818fc1b36e742fb9ac4fd792291969, type: 3}
   - button: {fileID: 707555633214130023}
     root: {fileID: 6047412103766949482}
     icon: {fileID: 2735037127593116448}
     labelGO: {fileID: 7817695158266415332}
-  slideDuration: 0.18
-  scaleUp: 1.3
+    targetImage: {fileID: 2432630804538822536}
+    normalSprite: {fileID: -7351681952266153540, guid: 5ed9e8983aa784d45bbea4e9e887a8e0, type: 3}
+    selectedSprite: {fileID: 2609060585800405716, guid: 3396d1c94eaf94763a46c29110bf4a0a, type: 3}
+  selectedScale: 1.12
+  normalScale: 1
   scaleDuration: 0.12
-  matchTabWidth: 1
-  selectionWidthPadding: 20
-  defaultIndex: 1
-  iconMoveUp: 50
-  iconAnimDuration: 0.12
-  iconBaseY: 100
+  homeIndex: 1
   tabTransition: {fileID: 0}
 --- !u!1 &2697125568409932973
 GameObject:
@@ -604,7 +606,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 100}
-  m_SizeDelta: {x: 150, y: 150}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6664758823875737255
 CanvasRenderer:
@@ -634,7 +636,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -3315498764086083285, guid: 99f72dbce6fcc48b597f5957146c3fab, type: 3}
+  m_Sprite: {fileID: -6222199842612748360, guid: b630e609f9d214587943a9e1abd87062, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -661,7 +663,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8251656379029792549
 RectTransform:
   m_ObjectHideFlags: 0
@@ -754,7 +756,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 100}
-  m_SizeDelta: {x: 150, y: 150}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1140432547748713395
 CanvasRenderer:
@@ -784,7 +786,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 941513520740932475, guid: 1bd591f813b384ffabcd625c99279e89, type: 3}
+  m_Sprite: {fileID: -7351681952266153540, guid: 5ed9e8983aa784d45bbea4e9e887a8e0, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -909,7 +911,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Shop
+  m_Text: Setting
 --- !u!114 &8403930352990928102
 MonoBehaviour:
   m_ObjectHideFlags: 0

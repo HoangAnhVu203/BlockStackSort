@@ -620,7 +620,7 @@ SpriteRenderer:
   m_SortingOrder: -5
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 0.95686275, b: 0.84313726, a: 1}
+  m_Color: {r: 0.9490196, g: 1, b: 0.78039217, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1484,7 +1484,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelManager
   boardGameplay: {fileID: 1370795346}
   levels:
-  - {fileID: 11400000, guid: 9d6b3e894c9f7461493fcfff95b7e717, type: 2}
   - {fileID: 11400000, guid: e6127dbbe7f0f49e187bfd110560e042, type: 2}
   - {fileID: 11400000, guid: c980e576ccd4d430e907c9f7aacd0973, type: 2}
   - {fileID: 11400000, guid: e78ec11abb35e4b67864adab921d9375, type: 2}
@@ -1497,6 +1496,28 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6ccb0cbf0172c4903b19a6a08b8e21d4, type: 2}
   - {fileID: 11400000, guid: 872354c60c5e54322857a7da96a72ffa, type: 2}
   - {fileID: 11400000, guid: fc40e92ebf3ee481180389c768790dd4, type: 2}
+  - {fileID: 11400000, guid: de521b3928e4d4c6aa365c1659c1a2d5, type: 2}
+  - {fileID: 11400000, guid: 55d52d3f3f0614dcdb7c2c7f884942fe, type: 2}
+  - {fileID: 11400000, guid: 2a81de6dcd02a43289587eac5bb2fa66, type: 2}
+  - {fileID: 11400000, guid: 5449fa89967c14f18806e198bcc3308e, type: 2}
+  - {fileID: 11400000, guid: aa3b126a1f22d43239543d9fa6802fc8, type: 2}
+  - {fileID: 11400000, guid: 7997e77db9c9440eca45fa9f66ff5a6b, type: 2}
+  - {fileID: 11400000, guid: d473ce8a97a724d4e917cd843281dbad, type: 2}
+  - {fileID: 11400000, guid: ddc86b7c5ea934308a9d0bb2c4da2a8b, type: 2}
+  - {fileID: 11400000, guid: 8278ba9e54b1c40bf97f4f17dbd813ab, type: 2}
+  - {fileID: 11400000, guid: b3f99cf25a82348ea8a4080d6b12f09b, type: 2}
+  - {fileID: 11400000, guid: 418244d55d05e47f4b49025f96e50e7a, type: 2}
+  - {fileID: 11400000, guid: 0ae5b423985e143139817b9c48a5dc68, type: 2}
+  - {fileID: 11400000, guid: 346776accfa414db1bf6d389a48e7b51, type: 2}
+  - {fileID: 11400000, guid: 2070efc5141d949d99f9adc449cb1373, type: 2}
+  - {fileID: 11400000, guid: 7c4374e9cb20f45f4ab30edf607ec647, type: 2}
+  - {fileID: 11400000, guid: d99381a81052642aba1efa9c54a5c222, type: 2}
+  - {fileID: 11400000, guid: bb4c476a8840a4d01897948b234eafa4, type: 2}
+  - {fileID: 11400000, guid: e9994123bb3b94943b1ba523ef0cf80a, type: 2}
+  - {fileID: 11400000, guid: ff33d5a98611c493d9b5f79ad173ca49, type: 2}
+  - {fileID: 11400000, guid: 9d6b3e894c9f7461493fcfff95b7e717, type: 2}
+  - {fileID: 11400000, guid: 58f372863f81b455b9062443e2cb487e, type: 2}
+  - {fileID: 11400000, guid: 7a203957d25d642e59bc700b46b7d422, type: 2}
 --- !u!1 &1301411683
 GameObject:
   m_ObjectHideFlags: 0
@@ -1611,7 +1632,7 @@ MonoBehaviour:
   currentLevel: {fileID: 0}
   columnSpacing: 1
   minColumnGap: 0.25
-  slotSpacing: 1.25
+  slotSpacing: 1.1
   slotScale: {x: 1, y: 1}
   firstColumnPosition: {x: -1.2, y: 2.2}
   trayPosition: {x: 0, y: -2.3}
@@ -1620,7 +1641,7 @@ MonoBehaviour:
   boardLimitSize: {x: 4, y: 5}
   onlyColorIndicatorSprite: {fileID: 5371412345509669250, guid: b2fb3ead90ebc4e60a71d30f72fd32f6, type: 3}
   onlyColorNeutralColor: {r: 0.8301887, g: 0.8301887, b: 0.8301887, a: 1}
-  onlyColorIndicatorOffset: {x: 0, y: 0.715}
+  onlyColorIndicatorOffset: {x: 0, y: 0.6}
   onlyColorIndicatorScale: {x: 0.08, y: 0.08}
   onlyColorStatusNormalSprite: {fileID: -6273744847746889614, guid: 9820166c008a841d9bbaa519912078d0, type: 3}
   onlyColorStatusSolvedSprite: {fileID: -1003359492206283040, guid: 5d169f852bd434a84a0c9bb8d5b964d7, type: 3}

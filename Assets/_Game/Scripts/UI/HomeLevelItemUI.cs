@@ -28,6 +28,11 @@ public class HomeLevelItemUI : MonoBehaviour
 
     private void OnDisable()
     {
+        Unbind();
+    }
+
+    public void Unbind()
+    {
         if (button != null)
         {
             button.onClick.RemoveListener(HandleClicked);

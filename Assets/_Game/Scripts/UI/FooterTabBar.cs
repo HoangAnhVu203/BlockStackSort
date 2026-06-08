@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,52 +9,31 @@ public class FooterTabBar : UICanvas
     public class Tab
     {
         public Button button;
-        public RectTransform root;   // RectTransform của Tab (thường là chính Button)
-        public RectTransform icon;   // RectTransform icon
-        public GameObject labelGO;   // Label object (Text/TMP)
+        public RectTransform root;
+        public RectTransform icon;
+        public GameObject labelGO;
+        public Image targetImage;
+        public Sprite normalSprite;
+        public Sprite selectedSprite;
     }
 
     [Header("Refs")]
-    [SerializeField] private RectTransform selection;  // nền trượt
-    [SerializeField] private RectTransform selectionParent; // thường là FooterBar hoặc cùng parent với selection
     [SerializeField] private List<Tab> tabs = new();
 
     [Header("Anim")]
-    [SerializeField] private float slideDuration = 0.18f;
-    [SerializeField] private float scaleUp = 1.12f;
+    [SerializeField] private float selectedScale = 1.12f;
+    [SerializeField] private float normalScale = 1f;
     [SerializeField] private float scaleDuration = 0.12f;
-
-    [Header("Selection Size")]
-    [SerializeField] private bool matchTabWidth = true;
-    [SerializeField] private float selectionWidthPadding = 20f; // bớt/đệm thêm tùy thiết kế
-    [SerializeField] private int defaultIndex = 1;
-
-    [Header("Icon Motion")]
-    [SerializeField] private float iconMoveUp = 18f;
-    [SerializeField] private float iconAnimDuration = 0.12f;
-    [SerializeField] private float iconBaseY = 0f;
+    [SerializeField] private int homeIndex = 1;
     [SerializeField] private TabTransitionController tabTransition;
 
+    private readonly Dictionary<RectTransform, Coroutine> scaleCoroutines = new();
     private int currentIndex = -1;
-    private Coroutine slideCo;
     private bool suppressNotify;
 
     private void Awake()
     {
-        for (int i = 0; i < tabs.Count; i++)
-        {
-            var b = tabs[i].button;
-            if (b != null)
-            {
-                var nav = new Navigation { mode = Navigation.Mode.None };
-                b.navigation = nav;
-
-                int idx = i;
-                b.onClick.RemoveAllListeners();
-                b.onClick.AddListener(() => Select(idx, true));
-            }
-        }
-
+        BindButtons();
         AutoBind();
     }
 
@@ -62,34 +41,30 @@ public class FooterTabBar : UICanvas
     {
         SetFooterY(100f);
         AutoBind();
+        BindButtons();
         StartCoroutine(ResetDefaultNextFrame());
     }
 
     private void SetFooterY(float y)
     {
-        var rectTransform = transform as RectTransform;
+        RectTransform rectTransform = transform as RectTransform;
         if (rectTransform == null)
         {
             return;
         }
 
-        var anchoredPosition = rectTransform.anchoredPosition;
+        Vector2 anchoredPosition = rectTransform.anchoredPosition;
         anchoredPosition.y = y;
         rectTransform.anchoredPosition = anchoredPosition;
     }
+
     private IEnumerator ResetDefaultNextFrame()
     {
-        yield return null; 
+        yield return null;
         SelectHome(false);
     }
 
-    private void Start()
-    {
-        //// Set initial state (Home = 0)
-        //Select(Mathf.Clamp(0, 0, tabs.Count - 1), false);
-        ////Select(defaultIndex, false);
-    }
-    public void SelectHome(bool animate) => Select(1, animate, true); // Home index = 1
+    public void SelectHome(bool animate) => Select(homeIndex, animate, true);
 
     public void SelectFromTransition(int index, bool animate)
     {
@@ -102,76 +77,84 @@ public class FooterTabBar : UICanvas
 
     private void Select(int index, bool animate, bool force)
     {
-        if (tabs == null || tabs.Count == 0) return;
-        index = Mathf.Clamp(index, 0, tabs.Count - 1);
-        if (index == currentIndex && !force) return;
+        if (tabs == null || tabs.Count == 0)
+        {
+            return;
+        }
 
-        // Update tabs visuals
+        index = Mathf.Clamp(index, 0, tabs.Count - 1);
+        if (index == currentIndex && !force)
+        {
+            return;
+        }
+
         for (int i = 0; i < tabs.Count; i++)
         {
-            bool active = (i == index);
-
-            // Label
-            if (tabs[i].labelGO != null)
-                tabs[i].labelGO.SetActive(active);
-
-            // Icon: scale + move
-            if (tabs[i].icon != null)
-            {
-                StartCoroutine(AnimateIcon(tabs[i].icon, active));
-            }
+            bool active = i == index;
+            ApplyTabState(tabs[i], active, animate);
         }
-
-
-        // Move selection
-        Vector2 targetPos = GetSelectionTargetAnchoredPos(tabs[index].root);
-
-        // Resize selection to match tab width (optional)
-        if (matchTabWidth && tabs[index].root != null)
-        {
-            float w = tabs[index].root.rect.width + selectionWidthPadding;
-            var size = selection.sizeDelta;
-            size.x = w;
-            selection.sizeDelta = size;
-        }
-
-        // Animate slide (or snap)
-        if (slideCo != null) StopCoroutine(slideCo);
-        slideCo = StartCoroutine(animate ? SlideTo(targetPos) : SnapTo(targetPos));
 
         currentIndex = index;
-
         NotifySwitch(index);
     }
 
-    private Vector2 GetSelectionTargetAnchoredPos(RectTransform tabRoot)
+    private void ApplyTabState(Tab tab, bool active, bool animate)
     {
-        Vector3 world = tabRoot.TransformPoint(tabRoot.rect.center);
-        Vector3 local = selectionParent.InverseTransformPoint(world);
+        if (tab == null)
+        {
+            return;
+        }
 
-        return new Vector2(local.x, selection.anchoredPosition.y);
+        ResolveTabReferences(tab);
+
+        if (tab.labelGO != null)
+        {
+            tab.labelGO.SetActive(active);
+        }
+
+        if (tab.targetImage != null)
+        {
+            Sprite targetSprite = active && tab.selectedSprite != null ? tab.selectedSprite : tab.normalSprite;
+            if (targetSprite != null)
+            {
+                tab.targetImage.sprite = targetSprite;
+            }
+        }
+
+        RectTransform targetRoot = tab.root != null ? tab.root : tab.button != null ? tab.button.transform as RectTransform : null;
+        if (targetRoot == null)
+        {
+            return;
+        }
+
+        Vector3 targetScale = Vector3.one * (active ? selectedScale : normalScale);
+        if (!animate)
+        {
+            targetRoot.localScale = targetScale;
+            return;
+        }
+
+        if (scaleCoroutines.TryGetValue(targetRoot, out Coroutine running) && running != null)
+        {
+            StopCoroutine(running);
+        }
+
+        scaleCoroutines[targetRoot] = StartCoroutine(ScaleTo(targetRoot, targetScale));
     }
 
-    private IEnumerator SnapTo(Vector2 target)
+    private IEnumerator ScaleTo(RectTransform target, Vector3 targetScale)
     {
-        selection.anchoredPosition = target;
-        yield break;
-    }
-
-    private IEnumerator SlideTo(Vector2 target)
-    {
-        Vector2 start = selection.anchoredPosition;
+        Vector3 startScale = target.localScale;
         float t = 0f;
-
         while (t < 1f)
         {
-            t += Time.unscaledDeltaTime / Mathf.Max(0.0001f, slideDuration);
+            t += Time.unscaledDeltaTime / Mathf.Max(0.0001f, scaleDuration);
             float k = EaseOutCubic(t);
-            selection.anchoredPosition = Vector2.LerpUnclamped(start, target, k);
+            target.localScale = Vector3.LerpUnclamped(startScale, targetScale, k);
             yield return null;
         }
 
-        selection.anchoredPosition = target;
+        target.localScale = targetScale;
     }
 
     private float EaseOutCubic(float x)
@@ -181,35 +164,56 @@ public class FooterTabBar : UICanvas
         return 1f - a * a * a;
     }
 
-    private IEnumerator AnimateIcon(RectTransform icon, bool active)
+    private void BindButtons()
     {
-        Vector3 startScale = icon.localScale;
-        Vector3 targetScale = active ? Vector3.one * scaleUp : Vector3.one;
-
-        Vector2 startPos = icon.anchoredPosition;
-
-        float targetY = active ? (iconBaseY + iconMoveUp) : iconBaseY;
-        Vector2 targetPos = new Vector2(startPos.x, targetY);
-
-        float t = 0f;
-        while (t < 1f)
+        if (tabs == null)
         {
-            t += Time.unscaledDeltaTime / Mathf.Max(0.0001f, iconAnimDuration);
-            float k = EaseOutCubic(t);
-
-            icon.localScale = Vector3.LerpUnclamped(startScale, targetScale, k);
-            icon.anchoredPosition = Vector2.LerpUnclamped(startPos, targetPos, k);
-            yield return null;
+            return;
         }
 
-        icon.localScale = targetScale;
-        icon.anchoredPosition = targetPos;
+        for (int i = 0; i < tabs.Count; i++)
+        {
+            ResolveTabReferences(tabs[i]);
+            Button button = tabs[i].button;
+            if (button == null)
+            {
+                continue;
+            }
+
+            Navigation nav = new Navigation { mode = Navigation.Mode.None };
+            button.navigation = nav;
+
+            int index = i;
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(() => Select(index, true));
+        }
+    }
+
+    private void ResolveTabReferences(Tab tab)
+    {
+        if (tab == null)
+        {
+            return;
+        }
+
+        if (tab.root == null && tab.button != null)
+        {
+            tab.root = tab.button.transform as RectTransform;
+        }
+
+        if (tab.targetImage == null && tab.button != null)
+        {
+            tab.targetImage = tab.button.GetComponent<Image>();
+        }
     }
 
     private void AutoBind()
     {
         tabTransition = GetComponent<TabTransitionController>();
-        if (tabTransition != null) return;
+        if (tabTransition != null)
+        {
+            return;
+        }
 
         tabTransition = gameObject.AddComponent<TabTransitionController>();
     }
@@ -218,15 +222,16 @@ public class FooterTabBar : UICanvas
     {
         tabTransition = controller;
     }
+
     private void NotifySwitch(int index)
     {
-        if (suppressNotify) return;
-        if (tabTransition == null) return;
+        if (suppressNotify || tabTransition == null)
+        {
+            return;
+        }
 
         if (index == 0) tabTransition.SwitchToLock();
         else if (index == 1) tabTransition.SwitchToHome();
         else if (index == 2) tabTransition.SwitchToCalendar();
     }
-
-
 }

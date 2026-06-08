@@ -4,6 +4,10 @@ using DG.Tweening;
 
 public class PanelGameplay : UICanvas
 {
+    private const string RollBackFreeUsedKey = "BlockStackSort.ItemFreeUsed.RollBack";
+    private const string ShuffleFreeUsedKey = "BlockStackSort.ItemFreeUsed.Shuffle";
+    private const string MagnetFreeUsedKey = "BlockStackSort.ItemFreeUsed.Magnet";
+
     [SerializeField] private Button rollBackBlockBtn;
     [SerializeField] private Button shuffleBlockBtn;
     [SerializeField] private Button magnetBlockBtn;
@@ -351,10 +355,15 @@ public class PanelGameplay : UICanvas
 
     private void ResetItemUses()
     {
-        int freeUses = Mathf.Max(0, startingFreeItemUses);
-        rollBackItemUses = freeUses;
-        shuffleItemUses = freeUses;
-        magnetItemUses = freeUses;
+        rollBackItemUses = GetInitialItemUses(RollBackFreeUsedKey);
+        shuffleItemUses = GetInitialItemUses(ShuffleFreeUsedKey);
+        magnetItemUses = GetInitialItemUses(MagnetFreeUsedKey);
+    }
+
+    private int GetInitialItemUses(string freeUsedKey)
+    {
+        bool hasUsedFree = PlayerPrefs.GetInt(freeUsedKey, 0) == 1;
+        return hasUsedFree ? 0 : Mathf.Max(0, startingFreeItemUses);
     }
 
     private void RefreshItemUseTexts()
@@ -382,9 +391,15 @@ public class PanelGameplay : UICanvas
         return true;
     }
 
-    private void ConsumeItemUse(ref int uses)
+    private void ConsumeItemUse(ref int uses, string freeUsedKey)
     {
         uses = Mathf.Max(0, uses - 1);
+        if (PlayerPrefs.GetInt(freeUsedKey, 0) == 0)
+        {
+            PlayerPrefs.SetInt(freeUsedKey, 1);
+            PlayerPrefs.Save();
+        }
+
         RefreshItemUseTexts();
     }
 
@@ -550,7 +565,7 @@ public class PanelGameplay : UICanvas
         BoardGameplay boardGameplay = FindFirstObjectByType<BoardGameplay>();
         if (boardGameplay != null && boardGameplay.RollbackLastMove())
         {
-            ConsumeItemUse(ref rollBackItemUses);
+            ConsumeItemUse(ref rollBackItemUses, RollBackFreeUsedKey);
         }
     }
 
@@ -565,7 +580,7 @@ public class PanelGameplay : UICanvas
         BoardGameplay boardGameplay = FindFirstObjectByType<BoardGameplay>();
         if (boardGameplay != null && boardGameplay.ShuffleBlocks())
         {
-            ConsumeItemUse(ref shuffleItemUses);
+            ConsumeItemUse(ref shuffleItemUses, ShuffleFreeUsedKey);
         }
     }
 
@@ -580,7 +595,7 @@ public class PanelGameplay : UICanvas
         BoardGameplay boardGameplay = FindFirstObjectByType<BoardGameplay>();
         if (boardGameplay != null && boardGameplay.ActivateMagnetMode())
         {
-            ConsumeItemUse(ref magnetItemUses);
+            ConsumeItemUse(ref magnetItemUses, MagnetFreeUsedKey);
         }
     }
 }
