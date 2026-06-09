@@ -27,12 +27,21 @@ public class LevelManager : Singleton<LevelManager>
     public void LoadCurrentLevel(bool restart)
     {
         LoadLevel(CurrentLevelIndex, restart);
+        RefreshLoadedLevelViews();
     }
 
     public void LoadNextLevel(bool restart)
     {
         SelectNextLevel();
         LoadLevel(CurrentLevelIndex, restart);
+        RefreshLoadedLevelViews();
+    }
+
+    public void LoadPreviousLevel(bool restart)
+    {
+        SelectPreviousLevel();
+        LoadLevel(CurrentLevelIndex, restart);
+        RefreshLoadedLevelViews();
     }
 
     public void CompleteCurrentLevel()
@@ -54,12 +63,40 @@ public class LevelManager : Singleton<LevelManager>
     public void SelectLevel(int levelIndex)
     {
         SetCurrentLevelIndex(levelIndex);
+        RefreshLoadedLevelViews();
     }
 
     public void SelectNextLevel()
     {
         int nextIndex = LevelCount > 0 ? (CurrentLevelIndex + 1) % LevelCount : 0;
         SetCurrentLevelIndex(nextIndex);
+        RefreshLoadedLevelViews();
+    }
+
+    public void SelectPreviousLevel()
+    {
+        int previousIndex = 0;
+        if (LevelCount > 0)
+        {
+            previousIndex = CurrentLevelIndex - 1;
+            if (previousIndex < 0)
+            {
+                previousIndex = LevelCount - 1;
+            }
+        }
+
+        SetCurrentLevelIndex(previousIndex);
+        RefreshLoadedLevelViews();
+    }
+
+    public void NextLevel()
+    {
+        ChangeLevel(1);
+    }
+
+    public void PreviousLevel()
+    {
+        ChangeLevel(-1);
     }
 
     public void PlayLevel(int levelIndex)
@@ -118,6 +155,31 @@ public class LevelManager : Singleton<LevelManager>
     {
         levels = newLevels ?? Array.Empty<LevelData>();
         CurrentLevelIndex = Mathf.Clamp(CurrentLevelIndex, 0, Mathf.Max(0, LevelCount - 1));
+        RefreshLoadedLevelViews();
+    }
+
+    private void ChangeLevel(int direction)
+    {
+        if (direction > 0)
+        {
+            SelectNextLevel();
+        }
+        else if (direction < 0)
+        {
+            SelectPreviousLevel();
+        }
+        else
+        {
+            RefreshLoadedLevelViews();
+            return;
+        }
+
+        if (ShouldReloadCurrentLevel())
+        {
+            LoadLevel(CurrentLevelIndex, true);
+        }
+
+        RefreshLoadedLevelViews();
     }
 
     private void LoadLevel(int levelIndex, bool restart)
@@ -161,6 +223,31 @@ public class LevelManager : Singleton<LevelManager>
         CurrentLevelIndex = Mathf.Clamp(levelIndex, 0, Mathf.Max(0, LevelCount - 1));
         PlayerPrefs.SetInt(CurrentLevelKey, CurrentLevelIndex);
         PlayerPrefs.Save();
+    }
+
+    private bool ShouldReloadCurrentLevel()
+    {
+        return currentLevelData != null
+            || (GameManager.instance != null && GameManager.Instance.State == GameState.GamePlay);
+    }
+
+    private void RefreshLoadedLevelViews()
+    {
+        UIManager uiManager = UIManager.instance;
+        if (uiManager == null)
+        {
+            return;
+        }
+
+        if (uiManager.IsUILoaded<PanelGameplay>())
+        {
+            uiManager.GetUI<PanelGameplay>().RefreshLevelMoveInfo();
+        }
+
+        if (uiManager.IsUILoaded<PanelHome>())
+        {
+            uiManager.GetUI<PanelHome>().RefreshLevelItems();
+        }
     }
 
     private void ResolveBoardGameplay()

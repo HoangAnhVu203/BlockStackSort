@@ -300,6 +300,16 @@ public class PanelGameplay : UICanvas
         SetText(moveText, remainingMoves.ToString());
     }
 
+    public void NextLevelBtn()
+    {
+        LevelManager.Instance.NextLevel();
+    }
+
+    public void PreviousLevelBtn()
+    {
+        LevelManager.Instance.PreviousLevel();
+    }
+
     private void ResolveInfoTexts()
     {
         if (levelText == null)

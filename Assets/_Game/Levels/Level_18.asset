@@ -40,7 +40,7 @@ MonoBehaviour:
     hasAcceptedColor: 0
     acceptedColor: 1
     freezeUnlockColumnCount: 0
-  - blocks: 070000000500000001000000010000000400000008000000
+  - blocks: 070000000500000001000000020000000400000008000000
     coveredBlocks: 000000000000
     hasAcceptedColor: 0
     acceptedColor: 1

@@ -176,7 +176,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 2063826154672905881, guid: 155dfe55a54be466d9436698a8be3c6f, type: 3}
+  m_Sprite: {fileID: 2063826154672905881, guid: 8429dafe39e044be196fb4c4ef8c2c89, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -286,6 +286,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3570730106175216143, guid: 1bfff7d56012942f68e3d7d8f140022f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7812574517620392272, guid: 1bfff7d56012942f68e3d7d8f140022f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -325,6 +329,10 @@ PrefabInstance:
     - target: {fileID: 7812574517620392272, guid: 1bfff7d56012942f68e3d7d8f140022f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8823237103898703510, guid: 1bfff7d56012942f68e3d7d8f140022f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

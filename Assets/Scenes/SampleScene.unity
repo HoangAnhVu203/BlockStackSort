@@ -226,6 +226,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 334368474}
+  - component: {fileID: 334368475}
   m_Layer: 0
   m_Name: TraySlot
   m_TagString: Untagged
@@ -242,12 +243,71 @@ Transform:
   m_GameObject: {fileID: 334368473}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.58252424, y: 0.776699, z: 1}
+  m_LocalPosition: {x: -0.0697, y: -0.277, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 760396037}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &334368475
+SpriteRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 334368473}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: 5205488783408843613, guid: c25f1cc86d84040339edfe96068b741b, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 2.32, y: 2.35}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_SpriteSortPoint: 0
 --- !u!1 &353061926
 GameObject:
   m_ObjectHideFlags: 0
@@ -620,7 +680,7 @@ SpriteRenderer:
   m_SortingOrder: -5
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.9490196, g: 1, b: 0.78039217, a: 1}
+  m_Color: {r: 0.99215686, g: 0.9764706, b: 0.92941177, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1100,7 +1160,8 @@ MonoBehaviour:
   freezeCounterFont: {fileID: 0}
   freezeCounterCharacterSize: 0.22
   freezeCounterFontSize: 48
-  freezeCounterColor: {r: 0, g: 0, b: 0, a: 1}
+  freezeCounterColor: {r: 0.3882353, g: 0.3882353, b: 0.3882353, a: 1}
+  freezeCounterOutlineColor: {r: 1, g: 1, b: 1, a: 1}
   onlyColorIndicator: {fileID: 0}
   onlyColorStatusIndicator: {fileID: 0}
 --- !u!1 &857273463
@@ -1205,7 +1266,8 @@ MonoBehaviour:
   freezeCounterFont: {fileID: 0}
   freezeCounterCharacterSize: 0.22
   freezeCounterFontSize: 48
-  freezeCounterColor: {r: 0, g: 0, b: 0, a: 1}
+  freezeCounterColor: {r: 0.3882353, g: 0.3882353, b: 0.3882353, a: 1}
+  freezeCounterOutlineColor: {r: 1, g: 1, b: 1, a: 1}
   onlyColorIndicator: {fileID: 0}
   onlyColorStatusIndicator: {fileID: 0}
 --- !u!1 &1068515548
@@ -1294,7 +1356,8 @@ MonoBehaviour:
   freezeCounterFont: {fileID: 0}
   freezeCounterCharacterSize: 0.22
   freezeCounterFontSize: 48
-  freezeCounterColor: {r: 0, g: 0, b: 0, a: 1}
+  freezeCounterColor: {r: 0.38679248, g: 0.38679248, b: 0.38679248, a: 1}
+  freezeCounterOutlineColor: {r: 1, g: 1, b: 1, a: 1}
   onlyColorIndicator: {fileID: 0}
   onlyColorStatusIndicator: {fileID: 0}
 --- !u!1 &1129639984
@@ -1629,9 +1692,10 @@ MonoBehaviour:
   boardRoot: {fileID: 1370795345}
   columnRoot: {fileID: 296041609}
   traySlot: {fileID: 334368474}
+  bgBoard: {fileID: 1700508111}
   currentLevel: {fileID: 0}
   columnSpacing: 1
-  minColumnGap: 0.25
+  minColumnGap: 0.15
   slotSpacing: 1.1
   slotScale: {x: 1, y: 1}
   firstColumnPosition: {x: -1.2, y: 2.2}
@@ -1639,14 +1703,16 @@ MonoBehaviour:
   fitColumnsToBoardLimit: 1
   boardLimitCenter: {x: 0, y: 0.6}
   boardLimitSize: {x: 4, y: 5}
-  onlyColorIndicatorSprite: {fileID: 5371412345509669250, guid: b2fb3ead90ebc4e60a71d30f72fd32f6, type: 3}
-  onlyColorNeutralColor: {r: 0.8301887, g: 0.8301887, b: 0.8301887, a: 1}
-  onlyColorIndicatorOffset: {x: 0, y: 0.6}
-  onlyColorIndicatorScale: {x: 0.08, y: 0.08}
-  onlyColorStatusNormalSprite: {fileID: -6273744847746889614, guid: 9820166c008a841d9bbaa519912078d0, type: 3}
-  onlyColorStatusSolvedSprite: {fileID: -1003359492206283040, guid: 5d169f852bd434a84a0c9bb8d5b964d7, type: 3}
-  onlyColorStatusOffset: {x: 0.18, y: 0.18}
-  onlyColorStatusScale: {x: 1, y: 1}
+  bgBoardPadding: {x: 0.18, y: 0.18}
+  bgBoardSortingOrder: 0
+  onlyColorIndicatorSprite: {fileID: -8191952408413883264, guid: 9b75d6c1d892748b2bb6c974780e5ba8, type: 3}
+  onlyColorNeutralColor: {r: 1, g: 1, b: 1, a: 1}
+  onlyColorIndicatorOffset: {x: 0, y: 0.7}
+  onlyColorIndicatorScale: {x: 0.2, y: 0.2}
+  onlyColorStatusNormalSprite: {fileID: 7662536645512589454, guid: fcf8d7548d0c7404097993aa55702d01, type: 3}
+  onlyColorStatusSolvedSprite: {fileID: 8306253319174094709, guid: f38e358686e5445c3b5f49c0c88642e4, type: 3}
+  onlyColorStatusOffset: {x: 0, y: 0.18}
+  onlyColorStatusScale: {x: 1.5, y: 1.5}
   redBlockPrefab: {fileID: 6219637224577169176, guid: acbd24989b89f415ea3cbcecfc4aa2e1, type: 3}
   yellowBlockPrefab: {fileID: 3004904773110896835, guid: 04060a9a7e24647f1ae8e7ca1404e236, type: 3}
   greenBlockPrefab: {fileID: 6719688238450979588, guid: 16ef08b95c77346458276651ec4ecc68, type: 3}
@@ -1659,7 +1725,7 @@ MonoBehaviour:
   rainbowBlockPrefab: {fileID: 3252520757256898164, guid: 15d3341aec7ce4d4894a18d4d9ff648f, type: 3}
   blueBlockPrefab: {fileID: 4389936248008098658, guid: cfde6ed4b3ab042b497f3b4e0f38954e, type: 3}
   orangeBlockPrefab: {fileID: 163290534425230144, guid: b5a8ab8c58fce4454a86581c16a9e61a, type: 3}
-  freezeCounterFont: {fileID: 12800000, guid: a31e6545773ba42b1aea88a3ba7dda1b, type: 3}
+  freezeCounterFont: {fileID: 12800000, guid: a0d8c1e87d9204b1ba97dd47579515f0, type: 3}
   freezeCounterCharacterSize: 0.22
   freezeCounterFontSize: 48
   freezeCounterColor: {r: 0, g: 0, b: 0, a: 1}
@@ -1866,7 +1932,8 @@ MonoBehaviour:
   freezeCounterFont: {fileID: 0}
   freezeCounterCharacterSize: 0.22
   freezeCounterFontSize: 48
-  freezeCounterColor: {r: 0, g: 0, b: 0, a: 1}
+  freezeCounterColor: {r: 0.3882353, g: 0.3882353, b: 0.3882353, a: 1}
+  freezeCounterOutlineColor: {r: 1, g: 1, b: 1, a: 1}
   onlyColorIndicator: {fileID: 0}
   onlyColorStatusIndicator: {fileID: 0}
 --- !u!1 &1468166318
@@ -2092,7 +2159,8 @@ MonoBehaviour:
   freezeCounterFont: {fileID: 0}
   freezeCounterCharacterSize: 0.22
   freezeCounterFontSize: 48
-  freezeCounterColor: {r: 0, g: 0, b: 0, a: 1}
+  freezeCounterColor: {r: 0.3882353, g: 0.3882353, b: 0.3882353, a: 1}
+  freezeCounterOutlineColor: {r: 1, g: 1, b: 1, a: 1}
   onlyColorIndicator: {fileID: 0}
   onlyColorStatusIndicator: {fileID: 0}
 --- !u!1 &1679867704
@@ -2125,6 +2193,97 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1618271026}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1700508110
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1700508112}
+  - component: {fileID: 1700508111}
+  m_Layer: 0
+  m_Name: BGBoard
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!212 &1700508111
+SpriteRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1700508110}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: -1193570118326381082, guid: 14000fbd22ae54a39b64dccaff93dbaa, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_SpriteSortPoint: 0
+--- !u!4 &1700508112
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1700508110}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.01, y: 0.98, z: 0}
+  m_LocalScale: {x: 0.8425, y: 0.7949573, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1731180236
 GameObject:
@@ -2444,3 +2603,4 @@ SceneRoots:
   - {fileID: 1370795345}
   - {fileID: 452414051}
   - {fileID: 502647740}
+  - {fileID: 1700508112}

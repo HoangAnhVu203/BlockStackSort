@@ -112,8 +112,13 @@ public sealed class GameManager : Singleton<GameManager>
     public void PlayNextLevel()
     {
         StopWinSequence();
-        LevelManager.Instance.SelectNextLevel();
-        StartGameplayLevel(true);
+        StartNextGameplayLevel(true);
+    }
+
+    public void PlayPreviousLevel()
+    {
+        StopWinSequence();
+        StartPreviousGameplayLevel(true);
     }
 
     private void StartGameplayLevel(bool restart)
@@ -125,6 +130,30 @@ public sealed class GameManager : Singleton<GameManager>
         }
 
         LevelManager.Instance.LoadCurrentLevel(restart);
+        ChangeState(GameState.GamePlay);
+    }
+
+    private void StartNextGameplayLevel(bool restart)
+    {
+        if (loadingCoroutine != null)
+        {
+            StopCoroutine(loadingCoroutine);
+            loadingCoroutine = null;
+        }
+
+        LevelManager.Instance.LoadNextLevel(restart);
+        ChangeState(GameState.GamePlay);
+    }
+
+    private void StartPreviousGameplayLevel(bool restart)
+    {
+        if (loadingCoroutine != null)
+        {
+            StopCoroutine(loadingCoroutine);
+            loadingCoroutine = null;
+        }
+
+        LevelManager.Instance.LoadPreviousLevel(restart);
         ChangeState(GameState.GamePlay);
     }
 

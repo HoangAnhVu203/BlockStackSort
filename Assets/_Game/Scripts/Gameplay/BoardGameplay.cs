@@ -6,6 +6,8 @@ using UnityEngine.InputSystem.Controls;
 
 public class BoardGameplay : MonoBehaviour
 {
+    private static readonly Color FreezeCounterTextColor = new Color32(0x63, 0x63, 0x63, 0xFF);
+
     private const string RedPrefabPath = "Assets/_Game/Prefabs/Block/BlockRed.prefab";
     private const string YellowPrefabPath = "Assets/_Game/Prefabs/Block/BlockYellow.prefab";
     private const string GreenPrefabPath = "Assets/_Game/Prefabs/Block/BlocGreen.prefab";
@@ -23,6 +25,7 @@ public class BoardGameplay : MonoBehaviour
     [SerializeField] private Transform boardRoot;
     [SerializeField] private Transform columnRoot;
     [SerializeField] private Transform traySlot;
+    [SerializeField] private SpriteRenderer bgBoard;
 
     [Header("Level")]
     [SerializeField] private LevelData currentLevel;
@@ -37,6 +40,8 @@ public class BoardGameplay : MonoBehaviour
     [SerializeField] private bool fitColumnsToBoardLimit = true;
     [SerializeField] private Vector2 boardLimitCenter = new Vector2(0f, 0.6f);
     [SerializeField] private Vector2 boardLimitSize = new Vector2(4f, 5f);
+    [SerializeField] private Vector2 bgBoardPadding = new Vector2(0.18f, 0.18f);
+    [SerializeField] private int bgBoardSortingOrder = 0;
 
     [Header("Only Color Indicator")]
     [SerializeField] private Sprite onlyColorIndicatorSprite;
@@ -66,7 +71,7 @@ public class BoardGameplay : MonoBehaviour
     [SerializeField] private Font freezeCounterFont;
     [SerializeField] private float freezeCounterCharacterSize = 0.22f;
     [SerializeField] private int freezeCounterFontSize = 48;
-    [SerializeField] private Color freezeCounterColor = Color.black;
+    [SerializeField] private Color freezeCounterColor = new Color32(0x63, 0x63, 0x63, 0xFF);
 
     [Header("Animation")]
     [SerializeField] private float trayToColumnDuration = 0.25f;
@@ -304,6 +309,7 @@ public class BoardGameplay : MonoBehaviour
         trayBlock.transform.position = traySlot.position;
         trayBlock.transform.localScale = Vector3.one;
 
+        FitBgBoardToColumns();
         RefreshLockedColumns();
         NotifyGameplayPanelChanged();
     }
@@ -366,6 +372,8 @@ public class BoardGameplay : MonoBehaviour
             FitColumnRootToBoardLimit();
         }
 
+        FitBgBoardToColumns();
+
         Transform tray = traySlot.parent;
         if (tray != null)
         {
@@ -393,7 +401,7 @@ public class BoardGameplay : MonoBehaviour
         }
 
         Bounds limitBounds = GetBoardLimitBounds();
-        Bounds columnBounds = CalculateColumnBounds();
+        Bounds columnBounds = CalculateColumnBounds(false);
         float limitWidth = Mathf.Max(0.01f, limitBounds.size.x);
         float limitHeight = Mathf.Max(0.01f, limitBounds.size.y);
         float scale = Mathf.Min(
@@ -403,7 +411,7 @@ public class BoardGameplay : MonoBehaviour
 
         columnRoot.localScale = new Vector3(scale, scale, 1f);
 
-        Bounds scaledBounds = CalculateColumnBounds();
+        Bounds scaledBounds = CalculateColumnBounds(false);
         Vector3 offset = limitBounds.center - scaledBounds.center;
         offset.z = 0f;
         columnRoot.position += offset;
@@ -454,7 +462,66 @@ public class BoardGameplay : MonoBehaviour
         return boardLimit != null ? boardLimit.transform : null;
     }
 
-    private Bounds CalculateColumnBounds()
+    private void FitBgBoardToColumns()
+    {
+        ResolveBgBoard();
+        if (bgBoard == null || columnRoot.childCount == 0)
+        {
+            return;
+        }
+
+        Bounds columnBounds = CalculateColumnBounds(true);
+        Vector2 targetSize = new Vector2(
+            Mathf.Max(0.01f, columnBounds.size.x + bgBoardPadding.x * 2f),
+            Mathf.Max(0.01f, columnBounds.size.y + bgBoardPadding.y * 2f));
+
+        Transform bgTransform = bgBoard.transform;
+        Vector3 center = columnBounds.center;
+        center.z = bgTransform.position.z;
+        bgTransform.position = center;
+
+        if (bgBoard.drawMode == SpriteDrawMode.Sliced || bgBoard.drawMode == SpriteDrawMode.Tiled)
+        {
+            bgBoard.size = targetSize;
+            bgTransform.localScale = Vector3.one;
+        }
+        else if (bgBoard.sprite != null)
+        {
+            Vector2 spriteSize = bgBoard.sprite.bounds.size;
+            Vector3 parentScale = bgTransform.parent != null ? bgTransform.parent.lossyScale : Vector3.one;
+            float parentScaleX = Mathf.Approximately(parentScale.x, 0f) ? 1f : Mathf.Abs(parentScale.x);
+            float parentScaleY = Mathf.Approximately(parentScale.y, 0f) ? 1f : Mathf.Abs(parentScale.y);
+            bgTransform.localScale = new Vector3(
+                targetSize.x / Mathf.Max(0.01f, spriteSize.x) / parentScaleX,
+                targetSize.y / Mathf.Max(0.01f, spriteSize.y) / parentScaleY,
+                bgTransform.localScale.z);
+        }
+
+        bgBoard.sortingOrder = bgBoardSortingOrder;
+        bgBoard.gameObject.SetActive(true);
+    }
+
+    private void ResolveBgBoard()
+    {
+        if (bgBoard != null)
+        {
+            return;
+        }
+
+        Transform found = boardRoot != null ? boardRoot.Find("BGBoard") : null;
+        if (found == null)
+        {
+            GameObject foundObject = GameObject.Find("BGBoard");
+            found = foundObject != null ? foundObject.transform : null;
+        }
+
+        if (found != null)
+        {
+            bgBoard = found.GetComponent<SpriteRenderer>();
+        }
+    }
+
+    private Bounds CalculateColumnBounds(bool includeIndicators = false)
     {
         bool hasBounds = false;
         Bounds bounds = new Bounds();
@@ -489,7 +556,38 @@ public class BoardGameplay : MonoBehaviour
             }
         }
 
+        if (includeIndicators)
+        {
+            SpriteRenderer[] renderers = columnRoot.GetComponentsInChildren<SpriteRenderer>(true);
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                if (renderers[i] == null || !ShouldIncludeRendererInBoardBackground(renderers[i]))
+                {
+                    continue;
+                }
+
+                if (!hasBounds)
+                {
+                    bounds = renderers[i].bounds;
+                    hasBounds = true;
+                }
+                else
+                {
+                    bounds.Encapsulate(renderers[i].bounds);
+                }
+            }
+        }
+
         return hasBounds ? bounds : new Bounds(columnRoot.position, Vector3.one);
+    }
+
+    private bool ShouldIncludeRendererInBoardBackground(SpriteRenderer spriteRenderer)
+    {
+        string rendererName = spriteRenderer.name.ToLowerInvariant();
+        return rendererName.Contains("onlycolorindicator")
+            || rendererName.Contains("onlyindicator")
+            || rendererName.Contains("onlycolorstatus")
+            || rendererName.Contains("statusindicator");
     }
 
     private void HandleColumnClicked(ColumnView column)
@@ -882,6 +980,8 @@ public class BoardGameplay : MonoBehaviour
         trayBlock = CreateBlock(levelData.TrayColor, traySlot, false);
         trayBlock.transform.position = traySlot.position;
         trayBlock.transform.localScale = Vector3.one;
+
+        FitBgBoardToColumns();
     }
 
     private void ConfigureColumnAcceptedColor(ColumnView column, bool hasAcceptedColor, BlockColorId acceptedColor)
@@ -900,6 +1000,7 @@ public class BoardGameplay : MonoBehaviour
 
     private void ConfigureColumnFreeze(ColumnView column, int unlockColumnCount)
     {
+        freezeCounterColor = FreezeCounterTextColor;
         column.ConfigureFreezeLock(
             unlockColumnCount,
             freezeCounterFont,

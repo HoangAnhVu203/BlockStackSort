@@ -5,8 +5,10 @@ using UnityEngine;
 
 public class ColumnView : MonoBehaviour
 {
+    private const int MaxFreezeLayerCount = 3;
     private const int OnlyColorIndicatorSortingOrder = 8;
     private const int OnlyColorStatusIndicatorSortingOrder = 9;
+    private const float FreezeCounterOutlineOffset = 0.035f;
 
     [SerializeField] private List<Transform> slots = new List<Transform>();
     [SerializeField] private SpriteRenderer freezeOverlay;
@@ -14,7 +16,8 @@ public class ColumnView : MonoBehaviour
     [SerializeField] private Font freezeCounterFont;
     [SerializeField] private float freezeCounterCharacterSize = 0.22f;
     [SerializeField] private int freezeCounterFontSize = 48;
-    [SerializeField] private Color freezeCounterColor = Color.black;
+    [SerializeField] private Color freezeCounterColor = new Color(0.3882353f, 0.3882353f, 0.3882353f, 1f);
+    [SerializeField] private Color freezeCounterOutlineColor = Color.white;
     [SerializeField] private SpriteRenderer onlyColorIndicator;
     [SerializeField] private SpriteRenderer onlyColorStatusIndicator;
 
@@ -30,6 +33,7 @@ public class ColumnView : MonoBehaviour
     private BlockColorId acceptedColor;
     private int freezeUnlockColumnCount;
     private bool isFreezeLocked;
+    private readonly List<TextMesh> freezeCounterOutlines = new List<TextMesh>();
 
     public bool IsLocked => isLocked;
     public bool IsFreezeLocked => isFreezeLocked;
@@ -128,14 +132,15 @@ public class ColumnView : MonoBehaviour
             return;
         }
 
-        SetFreezeVisualActive(true);
-        float progress = 1f - (remaining / (float)freezeUnlockColumnCount);
-        float alpha = Mathf.Lerp(0.85f, 0.25f, progress);
-        SetFreezeAlpha(alpha);
+        SetFreezeLayerCount(GetVisibleFreezeLayerCount(solvedColumnCount));
 
         if (freezeCounterText != null)
         {
+            freezeCounterText.gameObject.SetActive(true);
             freezeCounterText.text = remaining.ToString();
+            SetFreezeCounterOutlineActive(true);
+            UpdateFreezeCounterOutlines();
+            SyncFreezeCounterSorting();
         }
     }
 
@@ -585,25 +590,25 @@ public class ColumnView : MonoBehaviour
             MeshRenderer sortingRenderer = freezeCounterText.GetComponent<MeshRenderer>();
             if (sortingRenderer != null)
             {
-                sortingRenderer.sortingOrder = 71;
+                sortingRenderer.sortingOrder = 100;
             }
+
+            EnsureFreezeCounterOutlines();
+            UpdateFreezeCounterOutlines();
+            SyncFreezeCounterSorting();
         }
     }
 
     private void SetFreezeVisualActive(bool active)
     {
-        for (int i = 0; i < blocks.Count; i++)
-        {
-            if (blocks[i] != null)
-            {
-                blocks[i].SetFreezeVisible(active, active ? 0.85f : 0f);
-            }
-        }
+        SetFreezeLayerCount(active ? MaxFreezeLayerCount : 0);
 
         if (freezeCounterText != null)
         {
             freezeCounterText.gameObject.SetActive(active);
         }
+
+        SetFreezeCounterOutlineActive(active);
     }
 
     private void HideFreezeVisual()
@@ -615,16 +620,18 @@ public class ColumnView : MonoBehaviour
                 continue;
             }
 
-            blocks[i].FadeOutFreeze(0.25f);
+            blocks[i].SetFreezeLayerCount(0);
         }
 
         if (freezeCounterText != null)
         {
             freezeCounterText.gameObject.SetActive(false);
         }
+
+        SetFreezeCounterOutlineActive(false);
     }
 
-    private void SetFreezeAlpha(float alpha)
+    private void SetFreezeLayerCount(int activeLayerCount)
     {
         for (int i = 0; i < blocks.Count; i++)
         {
@@ -633,8 +640,173 @@ public class ColumnView : MonoBehaviour
                 continue;
             }
 
-            blocks[i].SetFreezeVisible(true, alpha);
+            blocks[i].SetFreezeLayerCount(activeLayerCount);
         }
+
+        SyncFreezeCounterSorting();
+    }
+
+    private void SyncFreezeCounterSorting()
+    {
+        if (freezeCounterText == null)
+        {
+            return;
+        }
+
+        MeshRenderer counterRenderer = freezeCounterText.GetComponent<MeshRenderer>();
+        if (counterRenderer == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < blocks.Count; i++)
+        {
+            if (blocks[i] == null)
+            {
+                continue;
+            }
+
+            SpriteRenderer blockRenderer = blocks[i].GetComponent<SpriteRenderer>();
+            if (blockRenderer == null)
+            {
+                continue;
+            }
+
+            counterRenderer.sortingLayerID = blockRenderer.sortingLayerID;
+            counterRenderer.sortingOrder = blockRenderer.sortingOrder + 90;
+            SyncFreezeCounterOutlineSorting(blockRenderer.sortingLayerID, counterRenderer.sortingOrder - 1);
+            return;
+        }
+
+        counterRenderer.sortingOrder = 100;
+        SyncFreezeCounterOutlineSorting(counterRenderer.sortingLayerID, counterRenderer.sortingOrder - 1);
+    }
+
+    private void EnsureFreezeCounterOutlines()
+    {
+        if (freezeCounterText == null || freezeCounterOutlines.Count > 0)
+        {
+            return;
+        }
+
+        for (int i = 0; i < 8; i++)
+        {
+            Transform found = transform.Find($"FreezeCounterOutline{i + 1}");
+            TextMesh outlineText = found != null ? found.GetComponent<TextMesh>() : null;
+            if (outlineText == null)
+            {
+                GameObject outlineObject = new GameObject($"FreezeCounterOutline{i + 1}");
+                outlineObject.transform.SetParent(transform, false);
+                outlineText = outlineObject.AddComponent<TextMesh>();
+            }
+
+            freezeCounterOutlines.Add(outlineText);
+        }
+    }
+
+    private void UpdateFreezeCounterOutlines()
+    {
+        EnsureFreezeCounterOutlines();
+        if (freezeCounterText == null)
+        {
+            return;
+        }
+
+        Vector2[] offsets =
+        {
+            new Vector2(-1f, 0f),
+            new Vector2(1f, 0f),
+            new Vector2(0f, -1f),
+            new Vector2(0f, 1f),
+            new Vector2(-1f, -1f),
+            new Vector2(-1f, 1f),
+            new Vector2(1f, -1f),
+            new Vector2(1f, 1f)
+        };
+
+        for (int i = 0; i < freezeCounterOutlines.Count; i++)
+        {
+            TextMesh outline = freezeCounterOutlines[i];
+            if (outline == null)
+            {
+                continue;
+            }
+
+            outline.text = freezeCounterText.text;
+            outline.anchor = freezeCounterText.anchor;
+            outline.alignment = freezeCounterText.alignment;
+            outline.font = freezeCounterText.font;
+            outline.characterSize = freezeCounterText.characterSize;
+            outline.fontSize = freezeCounterText.fontSize;
+            outline.color = freezeCounterOutlineColor;
+            outline.transform.localRotation = freezeCounterText.transform.localRotation;
+            outline.transform.localScale = freezeCounterText.transform.localScale;
+
+            Vector2 offset = offsets[i % offsets.Length] * FreezeCounterOutlineOffset;
+            Vector3 basePosition = freezeCounterText.transform.localPosition;
+            outline.transform.localPosition = basePosition + new Vector3(offset.x, offset.y, 0.001f);
+
+            MeshRenderer outlineRenderer = outline.GetComponent<MeshRenderer>();
+            MeshRenderer counterRenderer = freezeCounterText.GetComponent<MeshRenderer>();
+            if (outlineRenderer != null)
+            {
+                if (freezeCounterFont != null)
+                {
+                    outlineRenderer.sharedMaterial = freezeCounterFont.material;
+                }
+
+                if (counterRenderer != null)
+                {
+                    outlineRenderer.sortingLayerID = counterRenderer.sortingLayerID;
+                    outlineRenderer.sortingOrder = counterRenderer.sortingOrder - 1;
+                }
+            }
+        }
+    }
+
+    private void SetFreezeCounterOutlineActive(bool active)
+    {
+        EnsureFreezeCounterOutlines();
+        for (int i = 0; i < freezeCounterOutlines.Count; i++)
+        {
+            if (freezeCounterOutlines[i] != null)
+            {
+                freezeCounterOutlines[i].gameObject.SetActive(active);
+            }
+        }
+    }
+
+    private void SyncFreezeCounterOutlineSorting(int sortingLayerId, int sortingOrder)
+    {
+        EnsureFreezeCounterOutlines();
+        for (int i = 0; i < freezeCounterOutlines.Count; i++)
+        {
+            if (freezeCounterOutlines[i] == null)
+            {
+                continue;
+            }
+
+            MeshRenderer outlineRenderer = freezeCounterOutlines[i].GetComponent<MeshRenderer>();
+            if (outlineRenderer == null)
+            {
+                continue;
+            }
+
+            outlineRenderer.sortingLayerID = sortingLayerId;
+            outlineRenderer.sortingOrder = sortingOrder;
+        }
+    }
+
+    private int GetVisibleFreezeLayerCount(int solvedColumnCount)
+    {
+        if (freezeUnlockColumnCount <= 0)
+        {
+            return 0;
+        }
+
+        int solvedProgress = Mathf.Clamp(solvedColumnCount, 0, freezeUnlockColumnCount);
+        int hiddenLayerCount = Mathf.CeilToInt(solvedProgress * MaxFreezeLayerCount / (float)freezeUnlockColumnCount);
+        return Mathf.Clamp(MaxFreezeLayerCount - hiddenLayerCount, 0, MaxFreezeLayerCount);
     }
 
     private Bounds GetColumnLocalBounds()

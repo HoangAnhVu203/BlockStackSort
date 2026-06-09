@@ -13,29 +13,35 @@ MonoBehaviour:
   m_Name: Level_13
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   maxMoves: 35
-  trayColor: 1
+  trayColor: 2
   columns:
   - blocks: 0200000002000000010000000a0000000700000008000000
     coveredBlocks: 000000000000
     hasAcceptedColor: 0
     acceptedColor: 1
-  - blocks: 010000000100000002000000020000000400000007000000
+    freezeUnlockColumnCount: 0
+  - blocks: 010000000100000002000000020000000a00000007000000
     coveredBlocks: 000000000000
     hasAcceptedColor: 0
     acceptedColor: 1
-  - blocks: 080000000800000009000000080000000300000004000000
+    freezeUnlockColumnCount: 0
+  - blocks: 080000000800000009000000080000000400000004000000
     coveredBlocks: 000000000000
     hasAcceptedColor: 0
     acceptedColor: 1
+    freezeUnlockColumnCount: 0
   - blocks: 0a0000000a00000004000000080000000100000007000000
     coveredBlocks: 000000000000
     hasAcceptedColor: 0
     acceptedColor: 1
+    freezeUnlockColumnCount: 0
   - blocks: 07000000070000000a000000020000000400000001000000
     coveredBlocks: 000000000000
     hasAcceptedColor: 0
     acceptedColor: 1
+    freezeUnlockColumnCount: 0
   - blocks: 0400000004000000010000000a0000000700000008000000
     coveredBlocks: 000000000000
     hasAcceptedColor: 0
     acceptedColor: 1
+    freezeUnlockColumnCount: 0

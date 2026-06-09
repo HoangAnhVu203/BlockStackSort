@@ -1,8 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
 public class BlockView : MonoBehaviour
 {
+    private const int MaxFreezeLayerCount = 3;
+
     [SerializeField] private BlockColorId colorId;
     [SerializeField] private SpriteRenderer coverRenderer;
     [SerializeField] private Sprite coverSprite;
@@ -19,6 +22,7 @@ public class BlockView : MonoBehaviour
     private SpriteMask coverBurnMask;
     private bool isCoverBurning;
     private bool hasCapturedCoverStart;
+    private readonly List<SpriteRenderer> freezeLayers = new List<SpriteRenderer>();
 
     public void SetColorId(BlockColorId newColorId)
     {
@@ -110,31 +114,40 @@ public class BlockView : MonoBehaviour
 
     public void SetFreezeVisible(bool visible, float alpha)
     {
-        ResolveFreezeRenderer();
-        if (freezeRenderer == null)
-        {
-            return;
-        }
-
-        freezeRenderer.DOKill();
-        freezeRenderer.gameObject.SetActive(visible);
-        Color color = freezeRenderer.color;
-        color.a = alpha;
-        freezeRenderer.color = color;
-        SyncFreezeSortingOrder();
+        SetFreezeLayerCount(visible ? MaxFreezeLayerCount : 0);
     }
 
     public void FadeOutFreeze(float duration)
     {
-        ResolveFreezeRenderer();
-        if (freezeRenderer == null)
+        SetFreezeLayerCount(0);
+    }
+
+    public void SetFreezeLayerCount(int activeLayerCount)
+    {
+        ResolveFreezeRenderers();
+        if (freezeLayers.Count == 0)
         {
             return;
         }
 
-        freezeRenderer.DOKill();
-        freezeRenderer.DOFade(0f, duration)
-            .OnComplete(() => freezeRenderer.gameObject.SetActive(false));
+        activeLayerCount = Mathf.Clamp(activeLayerCount, 0, freezeLayers.Count);
+        int hiddenLayerCount = freezeLayers.Count - activeLayerCount;
+        for (int i = 0; i < freezeLayers.Count; i++)
+        {
+            SpriteRenderer layer = freezeLayers[i];
+            if (layer == null)
+            {
+                continue;
+            }
+
+            layer.DOKill();
+            Color color = layer.color;
+            color.a = 1f;
+            layer.color = color;
+            layer.gameObject.SetActive(i >= hiddenLayerCount);
+        }
+
+        SyncFreezeSortingOrder();
     }
 
     private void ResolveCoverRenderer()
@@ -180,9 +193,9 @@ public class BlockView : MonoBehaviour
         }
     }
 
-    private void ResolveFreezeRenderer()
+    private void ResolveFreezeRenderers()
     {
-        if (freezeRenderer != null)
+        if (freezeLayers.Count > 0)
         {
             return;
         }
@@ -198,25 +211,54 @@ public class BlockView : MonoBehaviour
             string childName = spriteRenderers[i].name.ToLowerInvariant();
             if (childName.Contains("freeze") || childName.Contains("ice"))
             {
-                freezeRenderer = spriteRenderers[i];
-                break;
+                freezeLayers.Add(spriteRenderers[i]);
             }
         }
+
+        freezeLayers.Sort((a, b) => GetFreezeLayerOrder(a).CompareTo(GetFreezeLayerOrder(b)));
+        freezeRenderer = freezeLayers.Count > 0 ? freezeLayers[freezeLayers.Count - 1] : null;
     }
 
     private void SyncFreezeSortingOrder()
     {
-        if (freezeRenderer == null)
+        ResolveFreezeRenderers();
+        if (freezeLayers.Count == 0)
         {
             return;
         }
 
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null)
+        if (spriteRenderer == null)
         {
-            freezeRenderer.sortingLayerID = spriteRenderer.sortingLayerID;
-            freezeRenderer.sortingOrder = spriteRenderer.sortingOrder + 2;
+            return;
         }
+
+        for (int i = 0; i < freezeLayers.Count; i++)
+        {
+            if (freezeLayers[i] == null)
+            {
+                continue;
+            }
+
+            freezeLayers[i].sortingLayerID = spriteRenderer.sortingLayerID;
+            freezeLayers[i].sortingOrder = spriteRenderer.sortingOrder + 2 + (freezeLayers.Count - 1 - i);
+        }
+    }
+
+    private int GetFreezeLayerOrder(SpriteRenderer layer)
+    {
+        string layerName = layer != null ? layer.name.ToLowerInvariant() : string.Empty;
+        if (layerName.Contains("freeze1") || layerName.Contains("ice1"))
+        {
+            return 1;
+        }
+
+        if (layerName.Contains("freeze2") || layerName.Contains("ice2"))
+        {
+            return 2;
+        }
+
+        return 3;
     }
 
     private void SyncCoverSortingOrder()
