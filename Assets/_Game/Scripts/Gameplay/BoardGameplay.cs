@@ -306,8 +306,7 @@ public class BoardGameplay : MonoBehaviour
         }
 
         trayBlock = CreateBlock(BlockColorId.White, traySlot, false);
-        trayBlock.transform.position = traySlot.position;
-        trayBlock.transform.localScale = Vector3.one;
+        trayBlock.SnapToSlot(traySlot);
 
         FitBgBoardToColumns();
         RefreshLockedColumns();
@@ -978,8 +977,7 @@ public class BoardGameplay : MonoBehaviour
         }
 
         trayBlock = CreateBlock(levelData.TrayColor, traySlot, false);
-        trayBlock.transform.position = traySlot.position;
-        trayBlock.transform.localScale = Vector3.one;
+        trayBlock.SnapToSlot(traySlot);
 
         FitBgBoardToColumns();
     }
@@ -1137,14 +1135,12 @@ public class BoardGameplay : MonoBehaviour
         Sequence sequence = DOTween.Sequence();
         block.transform.SetParent(traySlot, true);
         block.SetSortingOrder(55);
-        sequence.Append(block.transform.DOMove(traySlot.position, duration).SetEase(Ease.InOutQuad));
+        sequence.Append(block.transform.DOMove(block.GetSlotPosition(traySlot), duration).SetEase(Ease.InOutQuad));
         sequence.AppendCallback(() =>
         {
             trayBlock = block;
             block.SetSortingOrder(10);
-            block.transform.SetParent(traySlot, true);
-            block.transform.position = traySlot.position;
-            block.transform.localScale = Vector3.one;
+            block.SnapToSlot(traySlot);
         });
 
         return sequence;
@@ -1343,6 +1339,7 @@ public class BoardGameplay : MonoBehaviour
 
             Vector3 targetScale = Vector3.one * winScaleMultiplier;
             float delay = i * winWaveDelay;
+            blocks[i].PlaySolvedSpineAnimation(delay);
             blockTransform.DOScale(targetScale, winScaleDuration)
                 .SetDelay(delay)
                 .SetEase(Ease.OutQuad)
@@ -1483,6 +1480,7 @@ public class BoardGameplay : MonoBehaviour
                 Vector3 targetScale = Vector3.one * winScaleMultiplier;
                 float delay = (slotIndex * winWaveDelay) + (columnIndex * winWaveDelay * 0.35f);
 
+                blocks[slotIndex].PlaySolvedSpineAnimation(delay);
                 sequence.Insert(delay, blockTransform.DOScale(targetScale, winScaleDuration).SetEase(Ease.OutQuad));
                 sequence.Insert(delay + winScaleDuration, blockTransform.DOScale(startScale, winScaleDuration).SetEase(Ease.InQuad));
             }
@@ -1715,6 +1713,7 @@ public class BoardGameplay : MonoBehaviour
         block.name = $"Block_{colorId}";
         block.SetColorId(colorId);
         block.SetCoverActive(hasCover);
+        block.SnapToSlot(parentSlot);
         return block;
     }
 

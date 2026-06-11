@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using Spine.Unity;
 
 public class BlockView : MonoBehaviour
 {
     private const int MaxFreezeLayerCount = 3;
+    private const float SpineBlockLocalYOffset = -0.5f;
 
     [SerializeField] private BlockColorId colorId;
     [SerializeField] private SpriteRenderer coverRenderer;
@@ -15,6 +17,7 @@ public class BlockView : MonoBehaviour
 
     public BlockColorId ColorId => colorId;
     public bool HasCover => coverRenderer != null && coverRenderer.gameObject.activeSelf && !isCoverBurning;
+    public float SlotLocalYOffset => IsSpineBlock() ? SpineBlockLocalYOffset : 0f;
 
     private Vector3 coverStartLocalPosition;
     private Vector3 coverStartLocalScale = Vector3.one;
@@ -23,6 +26,7 @@ public class BlockView : MonoBehaviour
     private bool isCoverBurning;
     private bool hasCapturedCoverStart;
     private readonly List<SpriteRenderer> freezeLayers = new List<SpriteRenderer>();
+    private SkeletonAnimation skeletonAnimation;
 
     public void SetColorId(BlockColorId newColorId)
     {
@@ -108,8 +112,75 @@ public class BlockView : MonoBehaviour
             spriteRenderer.sortingOrder = sortingOrder;
         }
 
+        MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+        if (meshRenderer != null)
+        {
+            meshRenderer.sortingOrder = sortingOrder;
+        }
+
         SyncCoverSortingOrder();
         SyncFreezeSortingOrder();
+    }
+
+    public void SnapToSlot(Transform slot)
+    {
+        if (slot == null)
+        {
+            return;
+        }
+
+        transform.SetParent(slot, true);
+        transform.position = GetSlotPosition(slot);
+        transform.localScale = Vector3.one;
+    }
+
+    public Vector3 GetSlotPosition(Transform slot)
+    {
+        if (slot == null)
+        {
+            return transform.position;
+        }
+
+        return GetPositionWithSlotOffset(slot.position, slot);
+    }
+
+    public Vector3 GetPositionWithSlotOffset(Vector3 position, Transform referenceSlot)
+    {
+        if (referenceSlot == null)
+        {
+            return position + new Vector3(0f, SlotLocalYOffset, 0f);
+        }
+
+        return position + referenceSlot.TransformVector(new Vector3(0f, SlotLocalYOffset, 0f));
+    }
+
+    public void PlaySolvedSpineAnimation(float delay = 0f)
+    {
+        ResolveSkeletonAnimation();
+        if (skeletonAnimation == null)
+        {
+            return;
+        }
+
+        if (delay > 0f)
+        {
+            DOVirtual.DelayedCall(delay, PlaySolvedSpineAnimationNow).SetTarget(this);
+            return;
+        }
+
+        PlaySolvedSpineAnimationNow();
+    }
+
+    public Vector3 GetRootPositionForVisualCenter(Vector3 targetVisualCenter)
+    {
+        if (!TryGetVisualBounds(out Bounds visualBounds))
+        {
+            return targetVisualCenter;
+        }
+
+        Vector3 visualOffset = visualBounds.center - transform.position;
+        visualOffset.z = 0f;
+        return targetVisualCenter - visualOffset;
     }
 
     public void SetFreezeVisible(bool visible, float alpha)
@@ -190,6 +261,88 @@ public class BlockView : MonoBehaviour
             coverStartLocalScale = coverRenderer.transform.localScale;
             coverStartColor = coverRenderer.color;
             hasCapturedCoverStart = true;
+        }
+    }
+
+    private bool TryGetVisualBounds(out Bounds visualBounds)
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>(false);
+        bool hasBounds = false;
+        visualBounds = new Bounds(transform.position, Vector3.zero);
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Renderer renderer = renderers[i];
+            if (renderer == null || !ShouldUseRendererForVisualCenter(renderer))
+            {
+                continue;
+            }
+
+            if (!hasBounds)
+            {
+                visualBounds = renderer.bounds;
+                hasBounds = true;
+            }
+            else
+            {
+                visualBounds.Encapsulate(renderer.bounds);
+            }
+        }
+
+        return hasBounds;
+    }
+
+    private bool ShouldUseRendererForVisualCenter(Renderer renderer)
+    {
+        if (renderer == null)
+        {
+            return false;
+        }
+
+        string rendererName = renderer.name.ToLowerInvariant();
+        if (rendererName.Contains("cover")
+            || rendererName.Contains("overlay")
+            || rendererName.Contains("freeze")
+            || rendererName.Contains("ice"))
+        {
+            return false;
+        }
+
+        return renderer.GetComponentInParent<BlockView>() == this;
+    }
+
+    private bool IsSpineBlock()
+    {
+        ResolveSkeletonAnimation();
+        return skeletonAnimation != null;
+    }
+
+    private void ResolveSkeletonAnimation()
+    {
+        if (skeletonAnimation != null)
+        {
+            return;
+        }
+
+        skeletonAnimation = GetComponentInChildren<SkeletonAnimation>(true);
+    }
+
+    private void PlaySolvedSpineAnimationNow()
+    {
+        ResolveSkeletonAnimation();
+        if (skeletonAnimation == null
+            || skeletonAnimation.AnimationState == null
+            || skeletonAnimation.Skeleton == null
+            || skeletonAnimation.Skeleton.Data == null
+            || skeletonAnimation.Skeleton.Data.FindAnimation("action2") == null)
+        {
+            return;
+        }
+
+        skeletonAnimation.AnimationState.SetAnimation(0, "action2", false);
+        if (skeletonAnimation.Skeleton.Data.FindAnimation("action1") != null)
+        {
+            skeletonAnimation.AnimationState.AddAnimation(0, "action1", true, 0f);
         }
     }
 

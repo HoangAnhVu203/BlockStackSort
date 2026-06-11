@@ -200,7 +200,7 @@ public class ColumnView : MonoBehaviour
             Transform targetSlot = slots[i];
             block.transform.SetParent(targetSlot, true);
             block.SetSortingOrder(20);
-            sequence.Join(block.transform.DOMove(targetSlot.position, duration).SetEase(Ease.InOutQuad));
+            sequence.Join(block.transform.DOMove(block.GetSlotPosition(targetSlot), duration).SetEase(Ease.InOutQuad));
         }
 
         sequence.AppendCallback(() =>
@@ -219,12 +219,12 @@ public class ColumnView : MonoBehaviour
     public Sequence SetMagnetRaised(bool raised, float offset, float duration)
     {
         Sequence sequence = DOTween.Sequence();
-        float targetLocalY = raised ? offset : 0f;
         int sortingOrder = raised ? 45 : 10;
 
         for (int i = 0; i < blocks.Count; i++)
         {
             BlockView block = blocks[i];
+            float targetLocalY = block.SlotLocalYOffset + (raised ? offset : 0f);
             block.SetSortingOrder(sortingOrder);
             sequence.Join(block.transform.DOLocalMoveY(targetLocalY, duration).SetEase(Ease.OutQuad));
         }
@@ -262,27 +262,25 @@ public class ColumnView : MonoBehaviour
         outgoingBlock.SetSortingOrder(25);
 
         Sequence sequence = DOTween.Sequence();
-        sequence.Append(incomingBlock.transform.DOMove(entryPosition, trayToColumnDuration).SetEase(Ease.OutQuad));
-        sequence.Append(incomingBlock.transform.DOMove(slots[0].position, pushDuration).SetEase(Ease.OutQuad));
+        sequence.Append(incomingBlock.transform.DOMove(incomingBlock.GetPositionWithSlotOffset(entryPosition, slots[0]), trayToColumnDuration).SetEase(Ease.OutQuad));
+        sequence.Append(incomingBlock.transform.DOMove(incomingBlock.GetSlotPosition(slots[0]), pushDuration).SetEase(Ease.OutQuad));
 
         for (int i = oldBlocks.Count - 2; i >= 0; i--)
         {
             BlockView block = oldBlocks[i];
             Transform targetSlot = slots[i + 1];
             block.transform.SetParent(targetSlot, true);
-            sequence.Join(block.transform.DOMove(targetSlot.position, pushDuration).SetEase(Ease.OutQuad));
+            sequence.Join(block.transform.DOMove(block.GetSlotPosition(targetSlot), pushDuration).SetEase(Ease.OutQuad));
         }
 
-        sequence.Join(outgoingBlock.transform.DOMove(exitPosition, pushDuration).SetEase(Ease.OutQuad));
-        sequence.Append(outgoingBlock.transform.DOMove(traySlot.position, returnToTrayDuration).SetEase(Ease.InOutQuad));
+        sequence.Join(outgoingBlock.transform.DOMove(outgoingBlock.GetPositionWithSlotOffset(exitPosition, slots[slots.Count - 1]), pushDuration).SetEase(Ease.OutQuad));
+        sequence.Append(outgoingBlock.transform.DOMove(outgoingBlock.GetSlotPosition(traySlot), returnToTrayDuration).SetEase(Ease.InOutQuad));
         sequence.AppendCallback(() =>
         {
             SnapBlocksToSlots();
             incomingBlock.SetSortingOrder(10);
             outgoingBlock.SetSortingOrder(10);
-            outgoingBlock.transform.SetParent(traySlot, true);
-            outgoingBlock.transform.position = traySlot.position;
-            outgoingBlock.transform.localScale = Vector3.one;
+            outgoingBlock.SnapToSlot(traySlot);
         });
 
         return sequence;
@@ -307,20 +305,20 @@ public class ColumnView : MonoBehaviour
         currentTrayBlock.SetSortingOrder(25);
         previousTrayBlock.SetSortingOrder(30);
 
-        sequence.Append(currentTrayBlock.transform.DOMove(exitPosition, returnToTrayDuration).SetEase(Ease.InOutQuad));
-        sequence.Append(currentTrayBlock.transform.DOMove(slots[lastIndex].position, pushDuration).SetEase(Ease.OutQuad));
+        sequence.Append(currentTrayBlock.transform.DOMove(currentTrayBlock.GetPositionWithSlotOffset(exitPosition, slots[lastIndex]), returnToTrayDuration).SetEase(Ease.InOutQuad));
+        sequence.Append(currentTrayBlock.transform.DOMove(currentTrayBlock.GetSlotPosition(slots[lastIndex]), pushDuration).SetEase(Ease.OutQuad));
 
         for (int i = 0; i < previousBlocks.Count - 1; i++)
         {
             BlockView block = previousBlocks[i];
             Transform targetSlot = slots[i];
             block.transform.SetParent(targetSlot, true);
-            sequence.Join(block.transform.DOMove(targetSlot.position, pushDuration).SetEase(Ease.OutQuad));
+            sequence.Join(block.transform.DOMove(block.GetSlotPosition(targetSlot), pushDuration).SetEase(Ease.OutQuad));
         }
 
         previousTrayBlock.transform.SetParent(traySlot, true);
-        sequence.Join(previousTrayBlock.transform.DOMove(entryPosition, pushDuration).SetEase(Ease.OutQuad));
-        sequence.Append(previousTrayBlock.transform.DOMove(traySlot.position, trayToColumnDuration).SetEase(Ease.InOutQuad));
+        sequence.Join(previousTrayBlock.transform.DOMove(previousTrayBlock.GetPositionWithSlotOffset(entryPosition, slots[0]), pushDuration).SetEase(Ease.OutQuad));
+        sequence.Append(previousTrayBlock.transform.DOMove(previousTrayBlock.GetSlotPosition(traySlot), trayToColumnDuration).SetEase(Ease.InOutQuad));
         sequence.AppendCallback(() =>
         {
             blocks.Clear();
@@ -329,9 +327,7 @@ public class ColumnView : MonoBehaviour
 
             previousTrayBlock.SetSortingOrder(10);
             currentTrayBlock.SetSortingOrder(10);
-            previousTrayBlock.transform.SetParent(traySlot, true);
-            previousTrayBlock.transform.position = traySlot.position;
-            previousTrayBlock.transform.localScale = Vector3.one;
+            previousTrayBlock.SnapToSlot(traySlot);
         });
 
         return sequence;
@@ -395,7 +391,7 @@ public class ColumnView : MonoBehaviour
             BlockView block = blocks[i];
             Transform targetSlot = slots[i];
             block.transform.SetParent(targetSlot, true);
-            sequence.Join(block.transform.DOMove(targetSlot.position, duration).SetEase(Ease.OutQuad));
+            sequence.Join(block.transform.DOMove(block.GetSlotPosition(targetSlot), duration).SetEase(Ease.OutQuad));
         }
 
         sequence.AppendCallback(() =>
@@ -438,7 +434,7 @@ public class ColumnView : MonoBehaviour
             BlockView block = blocks[i];
             Transform targetSlot = slots[i];
             block.transform.SetParent(targetSlot, true);
-            sequence.Join(block.transform.DOMove(targetSlot.position, duration).SetEase(Ease.OutQuad));
+            sequence.Join(block.transform.DOMove(block.GetSlotPosition(targetSlot), duration).SetEase(Ease.OutQuad));
         }
 
         sequence.AppendCallback(() =>
@@ -921,8 +917,7 @@ public class ColumnView : MonoBehaviour
         for (int i = 0; i < blocks.Count; i++)
         {
             blocks[i].transform.SetParent(slots[i], true);
-            blocks[i].transform.position = slots[i].position;
-            blocks[i].transform.localScale = Vector3.one;
+            blocks[i].SnapToSlot(slots[i]);
         }
     }
 
