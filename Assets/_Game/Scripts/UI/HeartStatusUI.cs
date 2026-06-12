@@ -48,7 +48,7 @@ public sealed class HeartStatusUI : MonoBehaviour
         ResolveTexts();
         if (heartText != null)
         {
-            heartText.text = heartCount.ToString();
+            heartText.text = heartManager != null && heartManager.HasUnlimitedHeart ? "∞" : heartCount.ToString();
         }
     }
 
@@ -60,6 +60,12 @@ public sealed class HeartStatusUI : MonoBehaviour
             return;
         }
 
+        if (heartManager != null && heartManager.HasUnlimitedHeart)
+        {
+            countdownText.text = FormatUnlimitedTime(heartManager.GetUnlimitedHeartRemaining());
+            return;
+        }
+
         countdownText.text = isFull ? fullText : FormatRemainingTime(remaining);
     }
 
@@ -68,6 +74,21 @@ public sealed class HeartStatusUI : MonoBehaviour
         int totalSeconds = Mathf.Max(0, Mathf.CeilToInt((float)remaining.TotalSeconds));
         int minutes = totalSeconds / 60;
         int seconds = totalSeconds % 60;
+        return $"{minutes:00}:{seconds:00}";
+    }
+
+    private static string FormatUnlimitedTime(TimeSpan remaining)
+    {
+        int totalSeconds = Mathf.Max(0, Mathf.CeilToInt((float)remaining.TotalSeconds));
+        int hours = totalSeconds / 3600;
+        int minutes = (totalSeconds % 3600) / 60;
+        int seconds = totalSeconds % 60;
+
+        if (hours > 0)
+        {
+            return $"{hours:00}:{minutes:00}:{seconds:00}";
+        }
+
         return $"{minutes:00}:{seconds:00}";
     }
 

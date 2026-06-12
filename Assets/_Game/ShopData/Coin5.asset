@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa9a95e805ee843bc97a5e2224f67df4, type: 3}
+  m_Name: Coin5
+  m_EditorClassIdentifier: Assembly-CSharp::ShopProductData
+  iapProductId: 8
+  displayName: Coin5
+  displayPrice: 50000
+  rewards:
+  - productType: 2
+    itemType: 0
+    grantAmount: 50000
+    heartTimeMinutes: 0

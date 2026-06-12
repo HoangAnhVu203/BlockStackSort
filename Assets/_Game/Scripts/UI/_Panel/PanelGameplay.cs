@@ -60,6 +60,12 @@ public class PanelGameplay : UICanvas
         RefreshLevelMoveInfo();
         RefreshItemUseTexts();
 
+        if (ShopManager.Instance != null)
+        {
+            ShopManager.Instance.Changed -= RefreshItemUseTexts;
+            ShopManager.Instance.Changed += RefreshItemUseTexts;
+        }
+
         if (rollBackBlockBtn != null)
         {
             rollBackBlockBtn.onClick.RemoveListener(HandleRollBackBlockClicked);
@@ -140,6 +146,11 @@ public class PanelGameplay : UICanvas
         if (goHomeBtn != null)
         {
             goHomeBtn.onClick.RemoveListener(HandleGoHomeClicked);
+        }
+
+        if (ShopManager.Instance != null)
+        {
+            ShopManager.Instance.Changed -= RefreshItemUseTexts;
         }
     }
 
@@ -379,9 +390,9 @@ public class PanelGameplay : UICanvas
     private void RefreshItemUseTexts()
     {
         ResolveItemTexts();
-        SetItemUseText(rollBackItemText, rollBackItemUses);
-        SetItemUseText(shuffleItemText, shuffleItemUses);
-        SetItemUseText(magnetItemText, magnetItemUses);
+        SetItemUseText(rollBackItemText, GetAvailableItemUses(ShopItemType.RollBack, rollBackItemUses));
+        SetItemUseText(shuffleItemText, GetAvailableItemUses(ShopItemType.Shuffle, shuffleItemUses));
+        SetItemUseText(magnetItemText, GetAvailableItemUses(ShopItemType.Magnet, magnetItemUses));
     }
 
     private void SetItemUseText(Text targetText, int uses)
@@ -389,25 +400,31 @@ public class PanelGameplay : UICanvas
         SetText(targetText, uses > 0 ? uses.ToString() : addItemText);
     }
 
-    private bool TrySpendItemUse(ref int uses)
+    private int GetAvailableItemUses(ShopItemType itemType, int freeUses)
     {
-        if (uses <= 0)
-        {
-            uses = 1;
-            RefreshItemUseTexts();
-            return false;
-        }
-
-        return true;
+        int shopUses = ShopManager.Instance != null ? ShopManager.Instance.GetItemCount(itemType) : 0;
+        return Mathf.Max(0, freeUses) + shopUses;
     }
 
-    private void ConsumeItemUse(ref int uses, string freeUsedKey)
+    private bool HasItemUse(ShopItemType itemType, int freeUses)
     {
-        uses = Mathf.Max(0, uses - 1);
-        if (PlayerPrefs.GetInt(freeUsedKey, 0) == 0)
+        return GetAvailableItemUses(itemType, freeUses) > 0;
+    }
+
+    private void ConsumeItemUse(ShopItemType itemType, ref int uses, string freeUsedKey)
+    {
+        if (uses > 0)
         {
-            PlayerPrefs.SetInt(freeUsedKey, 1);
-            PlayerPrefs.Save();
+            uses = Mathf.Max(0, uses - 1);
+            if (PlayerPrefs.GetInt(freeUsedKey, 0) == 0)
+            {
+                PlayerPrefs.SetInt(freeUsedKey, 1);
+                PlayerPrefs.Save();
+            }
+        }
+        else if (ShopManager.Instance != null)
+        {
+            ShopManager.Instance.TryUseItem(itemType);
         }
 
         RefreshItemUseTexts();
@@ -567,7 +584,7 @@ public class PanelGameplay : UICanvas
     private void HandleRollBackBlockClicked()
     {
         PlayButtonFeedback();
-        if (!TrySpendItemUse(ref rollBackItemUses))
+        if (!HasItemUse(ShopItemType.RollBack, rollBackItemUses))
         {
             return;
         }
@@ -575,14 +592,14 @@ public class PanelGameplay : UICanvas
         BoardGameplay boardGameplay = FindFirstObjectByType<BoardGameplay>();
         if (boardGameplay != null && boardGameplay.RollbackLastMove())
         {
-            ConsumeItemUse(ref rollBackItemUses, RollBackFreeUsedKey);
+            ConsumeItemUse(ShopItemType.RollBack, ref rollBackItemUses, RollBackFreeUsedKey);
         }
     }
 
     private void HandleShuffleBlockClicked()
     {
         PlayButtonFeedback();
-        if (!TrySpendItemUse(ref shuffleItemUses))
+        if (!HasItemUse(ShopItemType.Shuffle, shuffleItemUses))
         {
             return;
         }
@@ -590,14 +607,14 @@ public class PanelGameplay : UICanvas
         BoardGameplay boardGameplay = FindFirstObjectByType<BoardGameplay>();
         if (boardGameplay != null && boardGameplay.ShuffleBlocks())
         {
-            ConsumeItemUse(ref shuffleItemUses, ShuffleFreeUsedKey);
+            ConsumeItemUse(ShopItemType.Shuffle, ref shuffleItemUses, ShuffleFreeUsedKey);
         }
     }
 
     private void HandleMagnetBlockClicked()
     {
         PlayButtonFeedback();
-        if (!TrySpendItemUse(ref magnetItemUses))
+        if (!HasItemUse(ShopItemType.Magnet, magnetItemUses))
         {
             return;
         }
@@ -605,7 +622,7 @@ public class PanelGameplay : UICanvas
         BoardGameplay boardGameplay = FindFirstObjectByType<BoardGameplay>();
         if (boardGameplay != null && boardGameplay.ActivateMagnetMode())
         {
-            ConsumeItemUse(ref magnetItemUses, MagnetFreeUsedKey);
+            ConsumeItemUse(ShopItemType.Magnet, ref magnetItemUses, MagnetFreeUsedKey);
         }
     }
 }

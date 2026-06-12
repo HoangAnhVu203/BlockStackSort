@@ -6,6 +6,7 @@ public class HeartManager : Singleton<HeartManager>
     private const string HeartCountKey = "BlockStackSort.HeartCount";
     private const string BonusHeartCountKey = "BlockStackSort.BonusHeartCount";
     private const string LastRechargeUtcTicksKey = "BlockStackSort.HeartLastRechargeUtcTicks";
+    private const string UnlimitedHeartEndUtcTicksKey = "BlockStackSort.HeartUnlimitedEndUtcTicks";
 
     [SerializeField, Min(1)] private int maxHeartCount = 5;
     [SerializeField, Min(1f)] private float rechargeSeconds = 300f;
@@ -21,6 +22,7 @@ public class HeartManager : Singleton<HeartManager>
     public int HeartCount => NormalHeartCount + BonusHeartCount;
     public int MaxHeartCount => maxHeartCount;
     public bool IsFull => NormalHeartCount >= maxHeartCount;
+    public bool HasUnlimitedHeart => GetUnlimitedHeartRemaining() > TimeSpan.Zero;
 
     private void Awake()
     {
@@ -49,6 +51,12 @@ public class HeartManager : Singleton<HeartManager>
         }
 
         ApplyOfflineRecharge();
+        if (HasUnlimitedHeart)
+        {
+            PublishState();
+            return true;
+        }
+
         if (HeartCount < amount)
         {
             PublishState();
@@ -121,6 +129,32 @@ public class HeartManager : Singleton<HeartManager>
         return CalculateTimeUntilNextHeart(DateTime.UtcNow);
     }
 
+    public TimeSpan GetUnlimitedHeartRemaining()
+    {
+        DateTime now = DateTime.UtcNow;
+        DateTime endUtc = GetUnlimitedHeartEndUtc(now);
+        TimeSpan remaining = endUtc - now;
+        return remaining > TimeSpan.Zero ? remaining : TimeSpan.Zero;
+    }
+
+    public void AddUnlimitedHeartTime(int seconds)
+    {
+        if (seconds <= 0)
+        {
+            return;
+        }
+
+        DateTime now = DateTime.UtcNow;
+        DateTime startUtc = GetUnlimitedHeartEndUtc(now);
+        if (startUtc < now)
+        {
+            startUtc = now;
+        }
+
+        SetUnlimitedHeartEndUtc(startUtc.AddSeconds(seconds));
+        PublishState();
+    }
+
     public void RefreshHeartDisplay()
     {
         ApplyOfflineRecharge();
@@ -142,6 +176,11 @@ public class HeartManager : Singleton<HeartManager>
         if (!PlayerPrefs.HasKey(LastRechargeUtcTicksKey))
         {
             PlayerPrefs.SetString(LastRechargeUtcTicksKey, DateTime.UtcNow.Ticks.ToString());
+        }
+
+        if (!PlayerPrefs.HasKey(UnlimitedHeartEndUtcTicksKey))
+        {
+            PlayerPrefs.SetString(UnlimitedHeartEndUtcTicksKey, DateTime.UtcNow.Ticks.ToString());
         }
 
         PlayerPrefs.Save();
@@ -197,6 +236,12 @@ public class HeartManager : Singleton<HeartManager>
         return long.TryParse(rawTicks, out long ticks) ? new DateTime(ticks, DateTimeKind.Utc) : fallback;
     }
 
+    private DateTime GetUnlimitedHeartEndUtc(DateTime fallback)
+    {
+        string rawTicks = PlayerPrefs.GetString(UnlimitedHeartEndUtcTicksKey, fallback.Ticks.ToString());
+        return long.TryParse(rawTicks, out long ticks) ? new DateTime(ticks, DateTimeKind.Utc) : fallback;
+    }
+
     private void SetHeartCountInternal(int heartCount)
     {
         PlayerPrefs.SetInt(HeartCountKey, Mathf.Clamp(heartCount, 0, maxHeartCount));
@@ -212,6 +257,12 @@ public class HeartManager : Singleton<HeartManager>
     private void SetLastRechargeUtc(DateTime time)
     {
         PlayerPrefs.SetString(LastRechargeUtcTicksKey, time.ToUniversalTime().Ticks.ToString());
+        PlayerPrefs.Save();
+    }
+
+    private void SetUnlimitedHeartEndUtc(DateTime time)
+    {
+        PlayerPrefs.SetString(UnlimitedHeartEndUtcTicksKey, time.ToUniversalTime().Ticks.ToString());
         PlayerPrefs.Save();
     }
 
