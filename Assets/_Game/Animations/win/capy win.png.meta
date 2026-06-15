@@ -1,0 +1,832 @@
+fileFormatVersion: 2
+guid: 32c35e992bdb243c7bc383a38e53b89b
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 1400706264398259949
+    second: capy win_0
+  - first:
+      213: -6006494851677350412
+    second: capy win_1
+  - first:
+      213: -597529253399329153
+    second: capy win_2
+  - first:
+      213: 2609348544886398071
+    second: capy win_3
+  - first:
+      213: -2399869090889617062
+    second: capy win_4
+  - first:
+      213: 762030256225731273
+    second: capy win_5
+  - first:
+      213: 5661894589222352727
+    second: capy win_6
+  - first:
+      213: -528988224712853798
+    second: capy win_7
+  - first:
+      213: -7314754772973023387
+    second: capy win_8
+  - first:
+      213: -2426945561571517028
+    second: capy win_9
+  - first:
+      213: -7730740961291713772
+    second: capy win_10
+  - first:
+      213: -7203893975879493598
+    second: capy win_11
+  - first:
+      213: 2251185445589717366
+    second: capy win_12
+  - first:
+      213: -3280384570175922562
+    second: capy win_13
+  - first:
+      213: -8589694843880689941
+    second: capy win_14
+  - first:
+      213: -1096340288782351100
+    second: capy win_15
+  - first:
+      213: 32240723306461431
+    second: capy win_16
+  - first:
+      213: 5638901826930263747
+    second: capy win_17
+  - first:
+      213: -2460631648624370516
+    second: capy win_18
+  - first:
+      213: -3530363309460945816
+    second: capy win_19
+  - first:
+      213: 1224189586669554935
+    second: capy win_20
+  - first:
+      213: 6399585366657426145
+    second: capy win_21
+  - first:
+      213: -4645865919406701018
+    second: capy win_22
+  - first:
+      213: 7985363226061020689
+    second: capy win_23
+  - first:
+      213: -8306237938656138409
+    second: capy win_24
+  - first:
+      213: -4889275438495603550
+    second: capy win_25
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 0
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 0
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: capy win_0
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 1
+        width: 423
+        height: 579
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de66f1c1dee407310800000000000000
+      internalID: 1400706264398259949
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_1
+      rect:
+        serializedVersion: 2
+        x: 424
+        y: 1
+        width: 344
+        height: 578
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f51f8491c4a4aca0800000000000000
+      internalID: -6006494851677350412
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_2
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 1
+        width: 363
+        height: 570
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f768a345f4625b7f0800000000000000
+      internalID: -597529253399329153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_3
+      rect:
+        serializedVersion: 2
+        x: 1131
+        y: 515
+        width: 65
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77cd2293da4463420800000000000000
+      internalID: 2609348544886398071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_4
+      rect:
+        serializedVersion: 2
+        x: 1198
+        y: 517
+        width: 60
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a51b512e6c3f1bed0800000000000000
+      internalID: -2399869090889617062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_5
+      rect:
+        serializedVersion: 2
+        x: 1198
+        y: 491
+        width: 25
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c24f6a0b76439a00800000000000000
+      internalID: 762030256225731273
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_6
+      rect:
+        serializedVersion: 2
+        x: 1258
+        y: 478
+        width: 60
+        height: 108
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 757fd428127139e40800000000000000
+      internalID: 5661894589222352727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_7
+      rect:
+        serializedVersion: 2
+        x: 1318
+        y: 478
+        width: 112
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad630a72308a8a8f0800000000000000
+      internalID: -528988224712853798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_8
+      rect:
+        serializedVersion: 2
+        x: 1430
+        y: 488
+        width: 42
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56f89d90a45cc7a90800000000000000
+      internalID: -7314754772973023387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_9
+      rect:
+        serializedVersion: 2
+        x: 1224
+        y: 356
+        width: 110
+        height: 122
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9d9159ced1c15ed0800000000000000
+      internalID: -2426945561571517028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_10
+      rect:
+        serializedVersion: 2
+        x: 1334
+        y: 402
+        width: 51
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41345af0e04e6b490800000000000000
+      internalID: -7730740961291713772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_11
+      rect:
+        serializedVersion: 2
+        x: 1385
+        y: 402
+        width: 42
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2285028c890a60c90800000000000000
+      internalID: -7203893975879493598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_12
+      rect:
+        serializedVersion: 2
+        x: 1430
+        y: 428
+        width: 110
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67197e74c31dd3f10800000000000000
+      internalID: 2251185445589717366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_13
+      rect:
+        serializedVersion: 2
+        x: 1430
+        y: 356
+        width: 110
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7eddf71d9bb972d0800000000000000
+      internalID: -3280384570175922562
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_14
+      rect:
+        serializedVersion: 2
+        x: 1133
+        y: 318
+        width: 65
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: beeac75bc064bc880800000000000000
+      internalID: -8589694843880689941
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_15
+      rect:
+        serializedVersion: 2
+        x: 1198
+        y: 356
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 405cd26e05409c0f0800000000000000
+      internalID: -1096340288782351100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_16
+      rect:
+        serializedVersion: 2
+        x: 1334
+        y: 356
+        width: 81
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f8bbfb54ca827000800000000000000
+      internalID: 32240723306461431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_17
+      rect:
+        serializedVersion: 2
+        x: 1503
+        y: 340
+        width: 33
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c6ca7dd557614e40800000000000000
+      internalID: 5638901826930263747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_18
+      rect:
+        serializedVersion: 2
+        x: 1198
+        y: 339
+        width: 31
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cac19a47d841addd0800000000000000
+      internalID: -2460631648624370516
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_19
+      rect:
+        serializedVersion: 2
+        x: 1501
+        y: 318
+        width: 33
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86402835641a10fc0800000000000000
+      internalID: -3530363309460945816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_20
+      rect:
+        serializedVersion: 2
+        x: 1201
+        y: 321
+        width: 30
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7fccb2b61f13df010800000000000000
+      internalID: 1224189586669554935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_21
+      rect:
+        serializedVersion: 2
+        x: 1131
+        y: 1
+        width: 376
+        height: 317
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e267690cf4efc850800000000000000
+      internalID: 6399585366657426145
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_22
+      rect:
+        serializedVersion: 2
+        x: 1507
+        y: 188
+        width: 27
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6268ba7af81968fb0800000000000000
+      internalID: -4645865919406701018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_23
+      rect:
+        serializedVersion: 2
+        x: 1507
+        y: 49
+        width: 27
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11e95dbbb85b1de60800000000000000
+      internalID: 7985363226061020689
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_24
+      rect:
+        serializedVersion: 2
+        x: 1507
+        y: 29
+        width: 33
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75b27866a905abc80800000000000000
+      internalID: -8306237938656138409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: capy win_25
+      rect:
+        serializedVersion: 2
+        x: 1507
+        y: 1
+        width: 33
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a46d67a4edc52cb0800000000000000
+      internalID: -4889275438495603550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      capy win_0: 1400706264398259949
+      capy win_1: -6006494851677350412
+      capy win_10: -7730740961291713772
+      capy win_11: -7203893975879493598
+      capy win_12: 2251185445589717366
+      capy win_13: -3280384570175922562
+      capy win_14: -8589694843880689941
+      capy win_15: -1096340288782351100
+      capy win_16: 32240723306461431
+      capy win_17: 5638901826930263747
+      capy win_18: -2460631648624370516
+      capy win_19: -3530363309460945816
+      capy win_2: -597529253399329153
+      capy win_20: 1224189586669554935
+      capy win_21: 6399585366657426145
+      capy win_22: -4645865919406701018
+      capy win_23: 7985363226061020689
+      capy win_24: -8306237938656138409
+      capy win_25: -4889275438495603550
+      capy win_3: 2609348544886398071
+      capy win_4: -2399869090889617062
+      capy win_5: 762030256225731273
+      capy win_6: 5661894589222352727
+      capy win_7: -528988224712853798
+      capy win_8: -7314754772973023387
+      capy win_9: -2426945561571517028
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

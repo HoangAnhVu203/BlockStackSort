@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum GameState
@@ -20,6 +21,7 @@ public sealed class GameManager : Singleton<GameManager>
 
     private Coroutine loadingCoroutine;
     private Coroutine winCoroutine;
+    private readonly List<Coroutine> winParticleDisableCoroutines = new List<Coroutine>();
     private bool hasStateChanged;
 
     public GameState State { get; private set; }
@@ -36,13 +38,13 @@ public sealed class GameManager : Singleton<GameManager>
     public void PlayInitialFlow()
     {
         StopWinSequence();
-        ChangeState(GameState.Loading);
         if (loadingCoroutine != null)
         {
             StopCoroutine(loadingCoroutine);
+            loadingCoroutine = null;
         }
 
-        loadingCoroutine = StartCoroutine(ShowHomeAfterLoading());
+        StartGameplayLevel(true);
     }
 
     public void PlayCurrentLevel()
@@ -183,8 +185,6 @@ public sealed class GameManager : Singleton<GameManager>
 
     private IEnumerator ShowWinAfterParticles()
     {
-        PlayWinParticles();
-
         if (winPanelDelay > 0f)
         {
             yield return new WaitForSecondsRealtime(winPanelDelay);
@@ -215,6 +215,7 @@ public sealed class GameManager : Singleton<GameManager>
                 break;
             case GameState.Win:
                 UIManager.Instance.OpenUI<PanelWin>();
+                PlayWinParticles();
                 break;
             case GameState.Lose:
                 UIManager.Instance.OpenUI<PanelLose>();
@@ -225,6 +226,8 @@ public sealed class GameManager : Singleton<GameManager>
     private void PlayWinParticles()
     {
         ResolveWinParticles();
+        StopWinParticleDisableCoroutines();
+
         for (int i = 0; i < winParticles.Length; i++)
         {
             if (winParticles[i] == null || IsGameplayBlockParticle(winParticles[i]))
@@ -235,6 +238,23 @@ public sealed class GameManager : Singleton<GameManager>
             winParticles[i].gameObject.SetActive(true);
             winParticles[i].Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             winParticles[i].Play(true);
+            winParticleDisableCoroutines.Add(StartCoroutine(DisableWinParticleWhenFinished(winParticles[i])));
+        }
+    }
+
+    private IEnumerator DisableWinParticleWhenFinished(ParticleSystem particleSystem)
+    {
+        yield return null;
+
+        while (particleSystem != null && particleSystem.IsAlive(true))
+        {
+            yield return null;
+        }
+
+        if (particleSystem != null)
+        {
+            particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            particleSystem.gameObject.SetActive(false);
         }
     }
 
@@ -284,6 +304,9 @@ public sealed class GameManager : Singleton<GameManager>
 
     private void StopWinSequence()
     {
+        StopWinParticleDisableCoroutines();
+        StopWinParticles();
+
         if (winCoroutine == null)
         {
             return;
@@ -291,6 +314,38 @@ public sealed class GameManager : Singleton<GameManager>
 
         StopCoroutine(winCoroutine);
         winCoroutine = null;
+    }
+
+    private void StopWinParticleDisableCoroutines()
+    {
+        for (int i = 0; i < winParticleDisableCoroutines.Count; i++)
+        {
+            if (winParticleDisableCoroutines[i] != null)
+            {
+                StopCoroutine(winParticleDisableCoroutines[i]);
+            }
+        }
+
+        winParticleDisableCoroutines.Clear();
+    }
+
+    private void StopWinParticles()
+    {
+        if (winParticles == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < winParticles.Length; i++)
+        {
+            if (winParticles[i] == null || IsGameplayBlockParticle(winParticles[i]))
+            {
+                continue;
+            }
+
+            winParticles[i].Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            winParticles[i].gameObject.SetActive(false);
+        }
     }
 
     private void OpenHomePanels()

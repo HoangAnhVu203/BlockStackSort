@@ -6,7 +6,7 @@ using Spine.Unity;
 public class BlockView : MonoBehaviour
 {
     private const int MaxFreezeLayerCount = 3;
-    private const float SpineBlockLocalYOffset = -0.5f;
+    private const float SpineBlockLocalYOffset = 0f;
 
     [SerializeField] private BlockColorId colorId;
     [SerializeField] private SpriteRenderer coverRenderer;

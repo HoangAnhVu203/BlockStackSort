@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7990654913685613783
 Transform:
   m_ObjectHideFlags: 0
@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 3838084661350700715}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.05, y: 1.05, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -180,7 +180,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bd55a8a180a74c489cc704c4c416619, type: 2}
+  - {fileID: 2100000, guid: 79baea529a4644d84914d88868b3905e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -216,7 +216,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d247ba06193faa74d9335f5481b2b56c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: spine-unity::Spine.Unity.SkeletonAnimation
-  skeletonDataAsset: {fileID: 11400000, guid: 4fc9f54f58b0d4584b6bf767c30b50f0, type: 2}
+  skeletonDataAsset: {fileID: 11400000, guid: 6b0b75eab8b9f44d68d94078ad8d2da3, type: 2}
   initialSkinName: 
   initialFlipX: 0
   initialFlipY: 0
@@ -255,7 +255,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1254147706942742853, guid: d19de8e32122d4cccb8e30eaea890f5e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1254147706942742853, guid: d19de8e32122d4cccb8e30eaea890f5e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -333,7 +333,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7812574517620392272, guid: 1bfff7d56012942f68e3d7d8f140022f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7812574517620392272, guid: 1bfff7d56012942f68e3d7d8f140022f, type: 3}
       propertyPath: m_LocalPosition.z

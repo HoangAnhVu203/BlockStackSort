@@ -1,0 +1,97 @@
+
+purple.png
+size: 1168,509
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Layer 2
+  rotate: true
+  xy: 504, 109
+  size: 398, 179
+  orig: 398, 179
+  offset: 0, 0
+  index: -1
+Layer 7
+  rotate: true
+  xy: 685, 110
+  size: 397, 328
+  orig: 397, 330
+  offset: 0, 1
+  index: -1
+Rectangle 1
+  rotate: true
+  xy: 2, 6
+  size: 501, 500
+  orig: 501, 500
+  offset: 0, 0
+  index: -1
+mat
+  rotate: false
+  xy: 704, 11
+  size: 213, 23
+  orig: 213, 23
+  offset: 0, 0
+  index: -1
+mat2
+  rotate: false
+  xy: 839, 66
+  size: 198, 42
+  orig: 198, 42
+  offset: 0, 0
+  index: -1
+mieng duoi
+  rotate: true
+  xy: 684, 26
+  size: 81, 18
+  orig: 81, 19
+  offset: 0, 0
+  index: -1
+mieng tren
+  rotate: false
+  xy: 633, 15
+  size: 49, 92
+  orig: 49, 92
+  offset: 0, 0
+  index: -1
+nau
+  rotate: false
+  xy: 1015, 118
+  size: 131, 150
+  orig: 131, 150
+  offset: 0, 0
+  index: -1
+nuocmat
+  rotate: true
+  xy: 1015, 270
+  size: 237, 144
+  orig: 237, 144
+  offset: 0, 0
+  index: -1
+taiphai
+  rotate: true
+  xy: 772, 37
+  size: 71, 65
+  orig: 71, 67
+  offset: 0, 1
+  index: -1
+taitrai
+  rotate: true
+  xy: 704, 36
+  size: 72, 66
+  orig: 72, 66
+  offset: 0, 0
+  index: -1
+tay trai
+  rotate: true
+  xy: 504, 2
+  size: 105, 127
+  orig: 107, 128
+  offset: 1, 1
+  index: -1
+tayphai
+  rotate: true
+  xy: 1039, 5
+  size: 111, 127
+  orig: 111, 127
+  offset: 0, 0
+  index: -1

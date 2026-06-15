@@ -1,0 +1,111 @@
+
+rainbow.png
+size: 1377,506
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Layer 1
+  rotate: false
+  xy: 2, 4
+  size: 501, 500
+  orig: 501, 500
+  offset: 0, 0
+  index: -1
+detail
+  rotate: false
+  xy: 505, 69
+  size: 451, 435
+  orig: 453, 436
+  offset: 1, 1
+  index: -1
+mahong
+  rotate: false
+  xy: 958, 139
+  size: 280, 42
+  orig: 280, 44
+  offset: 0, 1
+  index: -1
+mat
+  rotate: true
+  xy: 1300, 306
+  size: 198, 38
+  orig: 198, 38
+  offset: 0, 0
+  index: -1
+mat2
+  rotate: false
+  xy: 958, 116
+  size: 206, 21
+  orig: 207, 21
+  offset: 1, 0
+  index: -1
+mieng
+  rotate: false
+  xy: 1300, 220
+  size: 55, 84
+  orig: 55, 84
+  offset: 0, 0
+  index: -1
+nau
+  rotate: true
+  xy: 958, 2
+  size: 112, 129
+  orig: 112, 129
+  offset: 0, 0
+  index: -1
+phai
+  rotate: false
+  xy: 1340, 474
+  size: 35, 30
+  orig: 36, 30
+  offset: 0, 0
+  index: -1
+rau
+  rotate: false
+  xy: 505, 24
+  size: 373, 43
+  orig: 373, 43
+  offset: 0, 0
+  index: -1
+taiphai
+  rotate: false
+  xy: 1300, 149
+  size: 69, 69
+  orig: 70, 69
+  offset: 0, 0
+  index: -1
+taitrai
+  rotate: false
+  xy: 880, 5
+  size: 71, 62
+  orig: 73, 64
+  offset: 1, 1
+  index: -1
+tay trai
+  rotate: true
+  xy: 1089, 4
+  size: 110, 124
+  orig: 111, 126
+  offset: 1, 1
+  index: -1
+tayphai
+  rotate: false
+  xy: 1215, 12
+  size: 118, 125
+  orig: 118, 125
+  offset: 0, 0
+  index: -1
+than
+  rotate: false
+  xy: 958, 183
+  size: 340, 321
+  orig: 340, 323
+  offset: 0, 1
+  index: -1
+trai
+  rotate: true
+  xy: 1240, 139
+  size: 42, 28
+  orig: 42, 28
+  offset: 0, 0
+  index: -1

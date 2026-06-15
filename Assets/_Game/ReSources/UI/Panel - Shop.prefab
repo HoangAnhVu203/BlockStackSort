@@ -66,7 +66,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: -4996615623500602522, guid: 0c158f5e67f954a6abe98042d7a6bff4, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -186,7 +186,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 216176920104462078, guid: 2e597a427bdfe470b974f139785b9976, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -251,6 +251,7 @@ GameObject:
   - component: {fileID: 3197646437267605909}
   - component: {fileID: 8521127820349515299}
   - component: {fileID: 4574801574227066384}
+  - component: {fileID: 3411734758615347572}
   m_Layer: 5
   m_Name: Text (Legacy)
   m_TagString: Untagged
@@ -274,8 +275,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 506}
-  m_SizeDelta: {x: 559.1, y: 163.8}
+  m_AnchoredPosition: {x: 0, y: 493}
+  m_SizeDelta: {x: 559.1, y: 124.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8521127820349515299
 CanvasRenderer:
@@ -298,7 +299,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6981132, g: 0.51256746, b: 0.31283376, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -311,7 +312,7 @@ MonoBehaviour:
     m_FontStyle: 0
     m_BestFit: 1
     m_MinSize: 10
-    m_MaxSize: 100
+    m_MaxSize: 80
     m_Alignment: 4
     m_AlignByGeometry: 1
     m_RichText: 1
@@ -319,6 +320,96 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: SETTING
+--- !u!114 &3411734758615347572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3332171461413103599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
+  m_EffectDistance: {x: 3, y: -3}
+  m_UseGraphicAlpha: 1
+--- !u!1 &3765297620079440118
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6441363318516332513}
+  - component: {fileID: 5307825961631089812}
+  - component: {fileID: 8615323284789902670}
+  m_Layer: 5
+  m_Name: Image
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &6441363318516332513
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3765297620079440118}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8282651317749295465}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 578}
+  m_SizeDelta: {x: 570, y: 321}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &5307825961631089812
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3765297620079440118}
+  m_CullTransparentMesh: 1
+--- !u!114 &8615323284789902670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3765297620079440118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: -2884938861489916482, guid: 2c3f8b484eafa424185297a045a5e7d9, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &7279045124668220758
 GameObject:
   m_ObjectHideFlags: 0
@@ -385,7 +476,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 8108952978162276333, guid: 1f8e119ba33c6474d8efee8ea4242c6e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -472,6 +563,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5852256693451155354}
+  - {fileID: 6441363318516332513}
   - {fileID: 2062479257930432414}
   - {fileID: 1933123676178640680}
   - {fileID: 1038904888090767056}
@@ -540,12 +632,12 @@ MonoBehaviour:
   soundIcon: {fileID: 4915650545794711607}
   musicIcon: {fileID: 2199248644236939050}
   vibrationIcon: {fileID: 4213738649593768648}
-  soundOnSprite: {fileID: 0}
-  soundOffSprite: {fileID: 0}
-  musicOnSprite: {fileID: 0}
-  musicOffSprite: {fileID: 0}
-  vibrationOnSprite: {fileID: 0}
-  vibrationOffSprite: {fileID: 0}
+  soundOnSprite: {fileID: -4996615623500602522, guid: 0c158f5e67f954a6abe98042d7a6bff4, type: 3}
+  soundOffSprite: {fileID: -4312618989417070840, guid: 81eb6c135643a443eb36b40599695533, type: 3}
+  musicOnSprite: {fileID: 8108952978162276333, guid: 1f8e119ba33c6474d8efee8ea4242c6e, type: 3}
+  musicOffSprite: {fileID: -4810996483848302477, guid: 612c5950ff63140fe989a73fcf2364ed, type: 3}
+  vibrationOnSprite: {fileID: 216176920104462078, guid: 2e597a427bdfe470b974f139785b9976, type: 3}
+  vibrationOffSprite: {fileID: -8006317808576395993, guid: ce896d877d68c4263824de580f681e35, type: 3}
 --- !u!114 &3376474783693019125
 MonoBehaviour:
   m_ObjectHideFlags: 0

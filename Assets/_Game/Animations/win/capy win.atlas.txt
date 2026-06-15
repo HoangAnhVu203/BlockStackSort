@@ -1,0 +1,146 @@
+
+capy win.png
+size: 1541,587
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+chanphai
+  rotate: true
+  xy: 1386, 113
+  size: 71, 40
+  orig: 76, 44
+  offset: 1, 4
+  index: -1
+chantrai
+  rotate: true
+  xy: 1431, 29
+  size: 69, 40
+  orig: 86, 44
+  offset: 4, 4
+  index: -1
+hong
+  rotate: false
+  xy: 2, 8
+  size: 421, 577
+  orig: 423, 579
+  offset: 0, 2
+  index: -1
+mahong
+  rotate: true
+  xy: 1132, 9
+  size: 259, 65
+  orig: 260, 65
+  offset: 0, 0
+  index: -1
+mat
+  rotate: true
+  xy: 1199, 71
+  size: 159, 24
+  orig: 159, 24
+  offset: 0, 0
+  index: -1
+mat 2
+  rotate: true
+  xy: 1508, 384
+  size: 153, 25
+  orig: 153, 27
+  offset: 0, 1
+  index: -1
+mo mieng
+  rotate: false
+  xy: 1508, 539
+  size: 31, 18
+  orig: 31, 18
+  offset: 0, 0
+  index: -1
+mui
+  rotate: true
+  xy: 1335, 186
+  size: 44, 79
+  orig: 44, 79
+  offset: 0, 0
+  index: -1
+nau
+  rotate: false
+  xy: 1225, 110
+  size: 108, 120
+  orig: 108, 120
+  offset: 0, 0
+  index: -1
+rau
+  rotate: false
+  xy: 1199, 232
+  size: 336, 36
+  orig: 336, 36
+  offset: 0, 0
+  index: -1
+ron
+  rotate: false
+  xy: 1508, 559
+  size: 31, 26
+  orig: 32, 26
+  offset: 0, 0
+  index: -1
+tai phai
+  rotate: true
+  xy: 1199, 7
+  size: 62, 58
+  orig: 64, 58
+  offset: 1, 0
+  index: -1
+tai trai
+  rotate: true
+  xy: 1335, 112
+  size: 72, 49
+  orig: 74, 49
+  offset: 0, 0
+  index: -1
+tayphai
+  rotate: true
+  xy: 1319, 29
+  size: 79, 110
+  orig: 79, 110
+  offset: 0, 0
+  index: -1
+tayphai 1
+  rotate: false
+  xy: 1259, 2
+  size: 58, 106
+  orig: 60, 107
+  offset: 2, 0
+  index: -1
+taytrai
+  rotate: true
+  xy: 1431, 160
+  size: 70, 108
+  orig: 70, 109
+  offset: 0, 0
+  index: -1
+taytrai 1
+  rotate: true
+  xy: 1431, 100
+  size: 58, 108
+  orig: 62, 108
+  offset: 0, 0
+  index: -1
+than
+  rotate: true
+  xy: 1132, 270
+  size: 315, 374
+  orig: 321, 405
+  offset: 4, 31
+  index: -1
+vang
+  rotate: false
+  xy: 769, 17
+  size: 361, 568
+  orig: 414, 569
+  offset: 0, 1
+  index: -1
+xanh
+  rotate: false
+  xy: 425, 9
+  size: 342, 576
+  orig: 344, 577
+  offset: 2, 1
+  index: -1

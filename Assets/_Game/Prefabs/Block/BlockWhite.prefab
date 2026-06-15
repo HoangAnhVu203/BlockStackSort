@@ -89,7 +89,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: db2941bf6e4f14d5584917f1e898d5cc, type: 2}
+  - {fileID: 2100000, guid: 9fd7f9ea04c6243499a190c21d25ddf9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d247ba06193faa74d9335f5481b2b56c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: spine-unity::Spine.Unity.SkeletonAnimation
-  skeletonDataAsset: {fileID: 11400000, guid: db7ef761d35094906abd27f39dd34fa4, type: 2}
+  skeletonDataAsset: {fileID: 11400000, guid: 7b929333b64c14a64895244506e27a54, type: 2}
   initialSkinName: 
   initialFlipX: 0
   initialFlipY: 0
@@ -176,7 +176,7 @@ Transform:
   m_GameObject: {fileID: 8106424727118000950}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.05, y: 1.05, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -263,7 +263,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7812574517620392272, guid: 1bfff7d56012942f68e3d7d8f140022f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7812574517620392272, guid: 1bfff7d56012942f68e3d7d8f140022f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -321,7 +321,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1254147706942742853, guid: d19de8e32122d4cccb8e30eaea890f5e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1254147706942742853, guid: d19de8e32122d4cccb8e30eaea890f5e, type: 3}
       propertyPath: m_LocalPosition.z

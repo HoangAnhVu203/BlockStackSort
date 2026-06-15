@@ -1,0 +1,111 @@
+
+pink.png
+size: 1146,522
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+details
+  rotate: false
+  xy: 504, 42
+  size: 403, 107
+  orig: 404, 107
+  offset: 1, 0
+  index: -1
+gach ma hong
+  rotate: true
+  xy: 1093, 294
+  size: 226, 44
+  orig: 226, 44
+  offset: 0, 0
+  index: -1
+hoa
+  rotate: true
+  xy: 847, 298
+  size: 222, 244
+  orig: 222, 245
+  offset: 0, 1
+  index: -1
+luoi
+  rotate: true
+  xy: 873, 12
+  size: 28, 20
+  orig: 28, 20
+  offset: 0, 0
+  index: -1
+mahong
+  rotate: true
+  xy: 974, 52
+  size: 244, 59
+  orig: 244, 60
+  offset: 0, 0
+  index: -1
+mat
+  rotate: false
+  xy: 504, 5
+  size: 191, 35
+  orig: 191, 35
+  offset: 0, 0
+  index: -1
+mat2
+  rotate: false
+  xy: 697, 2
+  size: 174, 38
+  orig: 174, 38
+  offset: 0, 0
+  index: -1
+mieng
+  rotate: false
+  xy: 909, 75
+  size: 58, 85
+  orig: 58, 85
+  offset: 0, 0
+  index: -1
+nau
+  rotate: false
+  xy: 847, 162
+  size: 125, 134
+  orig: 125, 134
+  offset: 0, 0
+  index: -1
+nen
+  rotate: true
+  xy: 2, 19
+  size: 501, 500
+  orig: 501, 500
+  offset: 0, 0
+  index: -1
+taiphai
+  rotate: true
+  xy: 1035, 11
+  size: 71, 66
+  orig: 71, 67
+  offset: 0, 0
+  index: -1
+taitrai
+  rotate: false
+  xy: 909, 14
+  size: 62, 59
+  orig: 64, 60
+  offset: 1, 0
+  index: -1
+tayphai
+  rotate: false
+  xy: 1035, 84
+  size: 109, 88
+  orig: 109, 89
+  offset: 0, 1
+  index: -1
+taytrai
+  rotate: true
+  xy: 1035, 174
+  size: 118, 97
+  orig: 118, 98
+  offset: 0, 1
+  index: -1
+than
+  rotate: true
+  xy: 504, 151
+  size: 369, 341
+  orig: 369, 341
+  offset: 0, 0
+  index: -1

@@ -13,7 +13,7 @@ public class PanelGameplay : UICanvas
     [SerializeField] private Button magnetBlockBtn;
 
     [Header("Item Uses")]
-    [SerializeField, Min(0)] private int startingFreeItemUses = 1;
+    private int startingFreeItemUses = 30;
     [SerializeField] private Text rollBackItemText;
     [SerializeField] private Text shuffleItemText;
     [SerializeField] private Text magnetItemText;
@@ -102,11 +102,7 @@ public class PanelGameplay : UICanvas
             vibrationBtn.onClick.AddListener(HandleVibrationClicked);
         }
 
-        if (goHomeBtn != null)
-        {
-            goHomeBtn.onClick.RemoveListener(HandleGoHomeClicked);
-            goHomeBtn.onClick.AddListener(HandleGoHomeClicked);
-        }
+        DisableGoHomeButton();
     }
 
     private void OnDisable()
@@ -532,6 +528,18 @@ public class PanelGameplay : UICanvas
         }
 
         GameManager.Instance.GoHome();
+    }
+
+    private void DisableGoHomeButton()
+    {
+        if (goHomeBtn == null)
+        {
+            return;
+        }
+
+        goHomeBtn.onClick.RemoveListener(HandleGoHomeClicked);
+        goHomeBtn.interactable = false;
+        goHomeBtn.gameObject.SetActive(false);
     }
 
     private void RefreshSettingIcons()

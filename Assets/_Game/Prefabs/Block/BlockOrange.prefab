@@ -89,9 +89,9 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 59ab2b9235c1c492b8b757b57067de9b, type: 2}
-  - {fileID: 2100000, guid: f95cd82b22a9f4d8b8df440725450982, type: 2}
-  - {fileID: 2100000, guid: 59ab2b9235c1c492b8b757b57067de9b, type: 2}
+  - {fileID: 2100000, guid: f5b9383e70f5843878cfe1a70dac20fc, type: 2}
+  - {fileID: 2100000, guid: 91cc5ecf4433d439dbd879c9f79022da, type: 2}
+  - {fileID: 2100000, guid: f5b9383e70f5843878cfe1a70dac20fc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -127,7 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d247ba06193faa74d9335f5481b2b56c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: spine-unity::Spine.Unity.SkeletonAnimation
-  skeletonDataAsset: {fileID: 11400000, guid: 96278981006d04c56805c4098bfcc74b, type: 2}
+  skeletonDataAsset: {fileID: 11400000, guid: fa18e8b9d8ef443b9a8c4c0c76bef28d, type: 2}
   initialSkinName: 
   initialFlipX: 0
   initialFlipY: 0
@@ -178,7 +178,7 @@ Transform:
   m_GameObject: {fileID: 5846527270715107431}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.05, y: 1.05, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -257,7 +257,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1254147706942742853, guid: d19de8e32122d4cccb8e30eaea890f5e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1254147706942742853, guid: d19de8e32122d4cccb8e30eaea890f5e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -331,7 +331,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7812574517620392272, guid: 1bfff7d56012942f68e3d7d8f140022f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7812574517620392272, guid: 1bfff7d56012942f68e3d7d8f140022f, type: 3}
       propertyPath: m_LocalPosition.z

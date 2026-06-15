@@ -1,0 +1,125 @@
+
+bluesky.png
+size: 1341,511
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Rectangle 1
+  rotate: false
+  xy: 2, 9
+  size: 501, 500
+  orig: 501, 500
+  offset: 0, 0
+  index: -1
+detail
+  rotate: true
+  xy: 1003, 44
+  size: 465, 216
+  orig: 465, 216
+  offset: 0, 0
+  index: -1
+gach ma hong
+  rotate: false
+  xy: 1003, 11
+  size: 255, 31
+  orig: 256, 31
+  offset: 1, 0
+  index: -1
+khan
+  rotate: false
+  xy: 648, 70
+  size: 177, 73
+  orig: 178, 74
+  offset: 0, 0
+  index: -1
+luoi
+  rotate: true
+  xy: 798, 13
+  size: 55, 24
+  orig: 55, 24
+  offset: 0, 0
+  index: -1
+ma hong
+  rotate: true
+  xy: 1221, 227
+  size: 282, 68
+  orig: 283, 70
+  offset: 1, 1
+  index: -1
+mat1
+  rotate: false
+  xy: 648, 145
+  size: 191, 21
+  orig: 191, 21
+  offset: 0, 0
+  index: -1
+mat2
+  rotate: false
+  xy: 824, 2
+  size: 161, 29
+  orig: 163, 31
+  offset: 1, 1
+  index: -1
+mat3
+  rotate: false
+  xy: 505, 3
+  size: 219, 37
+  orig: 221, 38
+  offset: 1, 0
+  index: -1
+matnuoc
+  rotate: false
+  xy: 505, 168
+  size: 333, 49
+  orig: 335, 50
+  offset: 1, 1
+  index: -1
+mieng
+  rotate: false
+  xy: 1293, 56
+  size: 46, 86
+  orig: 46, 86
+  offset: 0, 0
+  index: -1
+nau
+  rotate: true
+  xy: 505, 42
+  size: 124, 141
+  orig: 124, 141
+  offset: 0, 0
+  index: -1
+nuoc
+  rotate: true
+  xy: 841, 33
+  size: 476, 160
+  orig: 477, 160
+  offset: 1, 0
+  index: -1
+rau
+  rotate: true
+  xy: 1291, 144
+  size: 365, 46
+  orig: 366, 48
+  offset: 0, 1
+  index: -1
+taiphai
+  rotate: false
+  xy: 726, 4
+  size: 70, 64
+  orig: 72, 64
+  offset: 1, 0
+  index: -1
+taitrai
+  rotate: false
+  xy: 1221, 75
+  size: 70, 67
+  orig: 72, 67
+  offset: 1, 0
+  index: -1
+than
+  rotate: false
+  xy: 505, 219
+  size: 334, 290
+  orig: 335, 328
+  offset: 0, 1
+  index: -1
