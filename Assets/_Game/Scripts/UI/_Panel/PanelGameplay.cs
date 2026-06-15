@@ -102,7 +102,13 @@ public class PanelGameplay : UICanvas
             vibrationBtn.onClick.AddListener(HandleVibrationClicked);
         }
 
-        DisableGoHomeButton();
+        if (goHomeBtn != null)
+        {
+            goHomeBtn.gameObject.SetActive(true);
+            goHomeBtn.interactable = true;
+            goHomeBtn.onClick.RemoveListener(HandleGoHomeClicked);
+            goHomeBtn.onClick.AddListener(HandleGoHomeClicked);
+        }
     }
 
     private void OnDisable()
@@ -528,18 +534,6 @@ public class PanelGameplay : UICanvas
         }
 
         GameManager.Instance.GoHome();
-    }
-
-    private void DisableGoHomeButton()
-    {
-        if (goHomeBtn == null)
-        {
-            return;
-        }
-
-        goHomeBtn.onClick.RemoveListener(HandleGoHomeClicked);
-        goHomeBtn.interactable = false;
-        goHomeBtn.gameObject.SetActive(false);
     }
 
     private void RefreshSettingIcons()

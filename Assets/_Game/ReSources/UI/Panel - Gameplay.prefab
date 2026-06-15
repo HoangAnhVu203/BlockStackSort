@@ -876,9 +876,9 @@ RectTransform:
   - {fileID: 3081600489176696925}
   m_Father: {fileID: 8509390020598030589}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -5.5, y: -776}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: -5.5, y: 260}
   m_SizeDelta: {x: 839, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1539220329727686916
@@ -1201,7 +1201,6 @@ MonoBehaviour:
   rollBackBlockBtn: {fileID: 2370360736589517065}
   shuffleBlockBtn: {fileID: 6885829293341129404}
   magnetBlockBtn: {fileID: 5932848883044257233}
-  startingFreeItemUses: 30
   rollBackItemText: {fileID: 3032305818216116644}
   shuffleItemText: {fileID: 8086375973444294128}
   magnetItemText: {fileID: 22026616502097569}
