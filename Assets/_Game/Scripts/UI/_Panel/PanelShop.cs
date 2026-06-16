@@ -107,11 +107,6 @@ public class PanelShop : UICanvas
             AudioManager.Instance.PlayButton();
         }
 
-        if (nextState)
-        {
-            Handheld.Vibrate();
-        }
-
         RefreshIcons();
     }
 

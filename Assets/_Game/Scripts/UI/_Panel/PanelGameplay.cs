@@ -7,6 +7,7 @@ public class PanelGameplay : UICanvas
     private const string RollBackFreeUsedKey = "BlockStackSort.ItemFreeUsed.RollBack";
     private const string ShuffleFreeUsedKey = "BlockStackSort.ItemFreeUsed.Shuffle";
     private const string MagnetFreeUsedKey = "BlockStackSort.ItemFreeUsed.Magnet";
+    private const int AskBuyItemCoinCost = 500;
 
     [SerializeField] private Button rollBackBlockBtn;
     [SerializeField] private Button shuffleBlockBtn;
@@ -509,7 +510,7 @@ public class PanelGameplay : UICanvas
         bool nextState = !AudioManager.IsSoundOn();
         AudioManager.Instance.SetSoundOn(nextState);
         RefreshSettingIcons();
-        PlayButtonFeedback(false);
+        PlayButtonFeedback();
     }
 
     private void HandleVibrationClicked()
@@ -517,12 +518,7 @@ public class PanelGameplay : UICanvas
         bool nextState = !AudioManager.IsVibrationOn();
         AudioManager.SetVibrationOn(nextState);
         RefreshSettingIcons();
-        PlayButtonFeedback(false);
-
-        if (nextState)
-        {
-            Handheld.Vibrate();
-        }
+        PlayButtonFeedback();
     }
 
     private void HandleGoHomeClicked()
@@ -549,16 +545,11 @@ public class PanelGameplay : UICanvas
         }
     }
 
-    private void PlayButtonFeedback(bool includeVibration = true)
+    private void PlayButtonFeedback()
     {
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.PlayButton();
-        }
-
-        if (includeVibration && AudioManager.IsVibrationOn())
-        {
-            Handheld.Vibrate();
         }
     }
 
@@ -588,11 +579,11 @@ public class PanelGameplay : UICanvas
         PlayButtonFeedback();
         if (!HasItemUse(ShopItemType.RollBack, rollBackItemUses))
         {
+            OpenAskBuyItemPanel(ShopItemType.RollBack, TryUseRollBackItem);
             return;
         }
 
-        BoardGameplay boardGameplay = FindFirstObjectByType<BoardGameplay>();
-        if (boardGameplay != null && boardGameplay.RollbackLastMove())
+        if (TryUseRollBackItem())
         {
             ConsumeItemUse(ShopItemType.RollBack, ref rollBackItemUses, RollBackFreeUsedKey);
         }
@@ -603,11 +594,11 @@ public class PanelGameplay : UICanvas
         PlayButtonFeedback();
         if (!HasItemUse(ShopItemType.Shuffle, shuffleItemUses))
         {
+            OpenAskBuyItemPanel(ShopItemType.Shuffle, TryUseShuffleItem);
             return;
         }
 
-        BoardGameplay boardGameplay = FindFirstObjectByType<BoardGameplay>();
-        if (boardGameplay != null && boardGameplay.ShuffleBlocks())
+        if (TryUseShuffleItem())
         {
             ConsumeItemUse(ShopItemType.Shuffle, ref shuffleItemUses, ShuffleFreeUsedKey);
         }
@@ -618,13 +609,43 @@ public class PanelGameplay : UICanvas
         PlayButtonFeedback();
         if (!HasItemUse(ShopItemType.Magnet, magnetItemUses))
         {
+            OpenAskBuyItemPanel(ShopItemType.Magnet, TryUseMagnetItem);
             return;
         }
 
-        BoardGameplay boardGameplay = FindFirstObjectByType<BoardGameplay>();
-        if (boardGameplay != null && boardGameplay.ActivateMagnetMode())
+        if (TryUseMagnetItem())
         {
             ConsumeItemUse(ShopItemType.Magnet, ref magnetItemUses, MagnetFreeUsedKey);
         }
+    }
+
+    private bool TryUseRollBackItem()
+    {
+        BoardGameplay boardGameplay = FindFirstObjectByType<BoardGameplay>();
+        return boardGameplay != null && boardGameplay.RollbackLastMove();
+    }
+
+    private bool TryUseShuffleItem()
+    {
+        BoardGameplay boardGameplay = FindFirstObjectByType<BoardGameplay>();
+        return boardGameplay != null && boardGameplay.ShuffleBlocks();
+    }
+
+    private bool TryUseMagnetItem()
+    {
+        BoardGameplay boardGameplay = FindFirstObjectByType<BoardGameplay>();
+        return boardGameplay != null && boardGameplay.ActivateMagnetMode();
+    }
+
+    private void OpenAskBuyItemPanel(ShopItemType itemType, System.Func<bool> useCallback)
+    {
+        if (UIManager.Instance == null)
+        {
+            return;
+        }
+
+        PanelAskBuyItem panel = UIManager.Instance.GetUI<PanelAskBuyItem>();
+        panel.Configure(itemType, useCallback, useCallback, AskBuyItemCoinCost);
+        panel.Open();
     }
 }

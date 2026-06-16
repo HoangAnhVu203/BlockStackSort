@@ -1808,6 +1808,12 @@ MonoBehaviour:
   winScaleMultiplier: 1.15
   winScaleDuration: 0.16
   winWaveDelay: 0.08
+  enableLevelOneTutorial: 1
+  tutorialHandPrefab: {fileID: 276959622366947996, guid: c9b8a2d0445454c6db494bc7b09b57ee, type: 3}
+  levelOneTutorialColumnNumbers: 02000000040000000300000001000000
+  tutorialHandOffset: {x: 0, y: -1}
+  tutorialHandSortingOrder: 500
+  tutorialHandMoveDuration: 0.35
 --- !u!1 &1375921749
 GameObject:
   m_ObjectHideFlags: 0

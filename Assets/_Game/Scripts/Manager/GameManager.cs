@@ -38,13 +38,13 @@ public sealed class GameManager : Singleton<GameManager>
     public void PlayInitialFlow()
     {
         StopWinSequence();
-        ChangeState(GameState.Loading);
         if (loadingCoroutine != null)
         {
             StopCoroutine(loadingCoroutine);
+            loadingCoroutine = null;
         }
 
-        loadingCoroutine = StartCoroutine(ShowHomeAfterLoading());
+        ChangeState(GameState.Home);
     }
 
     public void PlayCurrentLevel()

@@ -20,6 +20,7 @@ public class BoardGameplay : MonoBehaviour
     private const string RainbowPrefabPath = "Assets/_Game/Prefabs/Block/BlockRainbow.prefab";
     private const string BluePrefabPath = "Assets/_Game/Prefabs/Block/BlockBlue.prefab";
     private const string OrangePrefabPath = "Assets/_Game/Prefabs/Block/BlockOrange.prefab";
+    private const string TutorialHandPrefabPath = "Assets/_Game/Prefabs/Hand.prefab";
 
     [Header("Scene")]
     [SerializeField] private Transform boardRoot;
@@ -86,6 +87,14 @@ public class BoardGameplay : MonoBehaviour
     [SerializeField] private float winScaleDuration = 0.16f;
     [SerializeField] private float winWaveDelay = 0.08f;
 
+    [Header("Level 1 Tutorial")]
+    [SerializeField] private bool enableLevelOneTutorial = true;
+    [SerializeField] private GameObject tutorialHandPrefab;
+    [SerializeField] private int[] levelOneTutorialColumnNumbers = { 2, 4, 3, 1 };
+    [SerializeField] private Vector2 tutorialHandOffset = new Vector2(0.25f, 0.25f);
+    [SerializeField] private int tutorialHandSortingOrder = 100;
+    [SerializeField] private float tutorialHandMoveDuration = 0.35f;
+
     private readonly List<ColumnView> columns = new List<ColumnView>();
     private readonly List<bool> solvedColumnStates = new List<bool>();
     private readonly List<BlockView> bottomBlockStates = new List<BlockView>();
@@ -100,6 +109,9 @@ public class BoardGameplay : MonoBehaviour
     private bool solvedColumnStatesInitialized;
     private int maxMoves;
     private int remainingMoves;
+    private GameObject tutorialHandInstance;
+    private int tutorialStepIndex;
+    private bool isLevelOneTutorialActive;
 
     public int MaxMoves => maxMoves;
     public int RemainingMoves => remainingMoves;
@@ -144,6 +156,8 @@ public class BoardGameplay : MonoBehaviour
         {
             columns[i].Clicked -= HandleColumnClicked;
         }
+
+        DestroyTutorialHand();
     }
 
     public void InitializeFromManager()
@@ -182,6 +196,7 @@ public class BoardGameplay : MonoBehaviour
         hasWon = false;
         isAnimating = false;
         isMagnetMode = false;
+        StopLevelOneTutorial();
         HideMagnetOverlay();
         NotifyGameplayPanelChanged();
     }
@@ -246,6 +261,7 @@ public class BoardGameplay : MonoBehaviour
         rainbowBlockPrefab = rainbowBlockPrefab != null ? rainbowBlockPrefab : LoadEditorBlockPrefab(RainbowPrefabPath);
         blueBlockPrefab = blueBlockPrefab != null ? blueBlockPrefab : LoadEditorBlockPrefab(BluePrefabPath);
         orangeBlockPrefab = orangeBlockPrefab != null ? orangeBlockPrefab : LoadEditorBlockPrefab(OrangePrefabPath);
+        tutorialHandPrefab = tutorialHandPrefab != null ? tutorialHandPrefab : LoadEditorBlockPrefab(TutorialHandPrefabPath);
 #endif
     }
 
@@ -280,6 +296,7 @@ public class BoardGameplay : MonoBehaviour
             SpawnLevel(currentLevel);
             RefreshLockedColumns();
             NotifyGameplayPanelChanged();
+            ConfigureLevelOneTutorial();
             return;
         }
 
@@ -311,6 +328,7 @@ public class BoardGameplay : MonoBehaviour
         FitBgBoardToColumns();
         RefreshLockedColumns();
         NotifyGameplayPanelChanged();
+        ConfigureLevelOneTutorial();
     }
 
     private void BuildColumns()
@@ -602,6 +620,11 @@ public class BoardGameplay : MonoBehaviour
             return;
         }
 
+        if (!CanClickLevelOneTutorialColumn(column))
+        {
+            return;
+        }
+
         BlockView incomingBlock = trayBlock;
         MoveRecord moveRecord = new MoveRecord
         {
@@ -632,6 +655,7 @@ public class BoardGameplay : MonoBehaviour
                 isAnimating = false;
                 CheckWinLog();
                 CompletePlayerMove();
+                AdvanceLevelOneTutorial();
             }
         });
     }
@@ -767,6 +791,11 @@ public class BoardGameplay : MonoBehaviour
 
         if (column != null)
         {
+            if (!CanClickLevelOneTutorialColumn(column))
+            {
+                return;
+            }
+
             column.TriggerClick();
         }
     }
@@ -1330,6 +1359,11 @@ public class BoardGameplay : MonoBehaviour
 
     private void PlayColumnSolvedWave(ColumnView column)
     {
+        if (AudioManager.IsVibrationOn())
+        {
+            CandyCoded.HapticFeedback.HapticFeedback.LightFeedback();
+        }
+
         IReadOnlyList<BlockView> blocks = column.Blocks;
         for (int i = 0; i < blocks.Count; i++)
         {
@@ -1404,9 +1438,186 @@ public class BoardGameplay : MonoBehaviour
             isAnimating = false;
             CheckWinLog();
             CompletePlayerMove();
+            AdvanceLevelOneTutorial();
         });
 
         return true;
+    }
+
+    private void ConfigureLevelOneTutorial()
+    {
+        StopLevelOneTutorial();
+
+        if (!ShouldRunLevelOneTutorial())
+        {
+            return;
+        }
+
+        isLevelOneTutorialActive = true;
+        tutorialStepIndex = 0;
+        EnsureTutorialHand();
+        MoveTutorialHandToCurrentColumn();
+    }
+
+    private bool ShouldRunLevelOneTutorial()
+    {
+        if (!enableLevelOneTutorial || columns.Count == 0 || levelOneTutorialColumnNumbers == null || levelOneTutorialColumnNumbers.Length == 0)
+        {
+            return false;
+        }
+
+        LevelManager levelManager = LevelManager.instance != null ? LevelManager.Instance : FindFirstObjectByType<LevelManager>();
+        if (levelManager == null || levelManager.CurrentNormalLevelNumber != 1)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < levelOneTutorialColumnNumbers.Length; i++)
+        {
+            int columnIndex = levelOneTutorialColumnNumbers[i] - 1;
+            if (columnIndex < 0 || columnIndex >= columns.Count)
+            {
+                Debug.LogWarning($"BoardGameplay: Tutorial level 1 có cột {levelOneTutorialColumnNumbers[i]} nhưng board chỉ có {columns.Count} cột.");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private bool CanClickLevelOneTutorialColumn(ColumnView column)
+    {
+        if (!isLevelOneTutorialActive)
+        {
+            return true;
+        }
+
+        int targetColumnIndex = GetCurrentTutorialColumnIndex();
+        return targetColumnIndex >= 0 && targetColumnIndex < columns.Count && columns[targetColumnIndex] == column;
+    }
+
+    private int GetCurrentTutorialColumnIndex()
+    {
+        if (!isLevelOneTutorialActive
+            || levelOneTutorialColumnNumbers == null
+            || tutorialStepIndex < 0
+            || tutorialStepIndex >= levelOneTutorialColumnNumbers.Length)
+        {
+            return -1;
+        }
+
+        return levelOneTutorialColumnNumbers[tutorialStepIndex] - 1;
+    }
+
+    private void AdvanceLevelOneTutorial()
+    {
+        if (!isLevelOneTutorialActive)
+        {
+            return;
+        }
+
+        tutorialStepIndex++;
+        if (tutorialStepIndex >= levelOneTutorialColumnNumbers.Length)
+        {
+            StopLevelOneTutorial();
+            return;
+        }
+
+        MoveTutorialHandToCurrentColumn();
+    }
+
+    private void StopLevelOneTutorial()
+    {
+        isLevelOneTutorialActive = false;
+        tutorialStepIndex = 0;
+
+        if (tutorialHandInstance != null)
+        {
+            tutorialHandInstance.transform.DOKill();
+            tutorialHandInstance.SetActive(false);
+        }
+    }
+
+    private void EnsureTutorialHand()
+    {
+        if (tutorialHandInstance != null || tutorialHandPrefab == null)
+        {
+            return;
+        }
+
+        Transform parent = boardRoot != null ? boardRoot : transform;
+        tutorialHandInstance = Instantiate(tutorialHandPrefab, parent);
+        SetTutorialHandSortingOrder();
+    }
+
+    private void MoveTutorialHandToCurrentColumn()
+    {
+        EnsureTutorialHand();
+        if (tutorialHandInstance == null)
+        {
+            return;
+        }
+
+        int columnIndex = GetCurrentTutorialColumnIndex();
+        if (columnIndex < 0 || columnIndex >= columns.Count)
+        {
+            StopLevelOneTutorial();
+            return;
+        }
+
+        tutorialHandInstance.SetActive(true);
+        Vector3 targetPosition = GetTutorialHandPosition(columns[columnIndex]);
+        tutorialHandInstance.transform.DOKill();
+
+        if (tutorialStepIndex <= 0)
+        {
+            tutorialHandInstance.transform.position = targetPosition;
+        }
+        else
+        {
+            tutorialHandInstance.transform
+                .DOMove(targetPosition, tutorialHandMoveDuration)
+                .SetEase(Ease.InOutSine);
+        }
+
+        SetTutorialHandSortingOrder();
+    }
+
+    private Vector3 GetTutorialHandPosition(ColumnView column)
+    {
+        if (column != null && column.Slots.Count > 0 && column.Slots[0] != null)
+        {
+            return column.Slots[0].position + new Vector3(tutorialHandOffset.x, tutorialHandOffset.y, 0f);
+        }
+
+        return column != null
+            ? column.transform.position + new Vector3(tutorialHandOffset.x, tutorialHandOffset.y, 0f)
+            : transform.position;
+    }
+
+    private void SetTutorialHandSortingOrder()
+    {
+        if (tutorialHandInstance == null)
+        {
+            return;
+        }
+
+        SpriteRenderer[] renderers = tutorialHandInstance.GetComponentsInChildren<SpriteRenderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            renderers[i].sortingOrder = tutorialHandSortingOrder;
+        }
+    }
+
+    private void DestroyTutorialHand()
+    {
+        if (tutorialHandInstance == null)
+        {
+            return;
+        }
+
+        Destroy(tutorialHandInstance);
+        tutorialHandInstance = null;
     }
 
     private void ResetMoveLimit()
@@ -1460,6 +1671,11 @@ public class BoardGameplay : MonoBehaviour
 
     private void PlayWinWave()
     {
+        if (AudioManager.IsVibrationOn())
+        {
+            CandyCoded.HapticFeedback.HapticFeedback.LightFeedback();
+        }
+
         Sequence sequence = DOTween.Sequence();
         int maxSlotCount = GetMaxSlotCount();
 
