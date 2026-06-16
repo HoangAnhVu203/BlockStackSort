@@ -103,6 +103,8 @@ public class BoardGameplay : MonoBehaviour
     private bool isAnimating;
     private bool hasWon;
     private bool isMagnetMode;
+    private bool suppressBottomCoverBurn;
+    private readonly HashSet<BlockView> magnetCoverBurnTargets = new HashSet<BlockView>();
     private SpriteRenderer magnetOverlay;
     private MoveRecord pendingMoveRecord;
     private bool isInitialized;
@@ -723,8 +725,8 @@ public class BoardGameplay : MonoBehaviour
             return false;
         }
 
-        List<ColumnView> unsolvedColumns = GetUnsolvedColumns(null);
-        if (unsolvedColumns.Count == 0)
+        List<ColumnView> magnetColumns = GetMagnetAvailableColumns(null);
+        if (magnetColumns.Count == 0)
         {
             return false;
         }
@@ -734,9 +736,9 @@ public class BoardGameplay : MonoBehaviour
         ShowMagnetOverlay();
 
         Sequence sequence = DOTween.Sequence();
-        for (int i = 0; i < unsolvedColumns.Count; i++)
+        for (int i = 0; i < magnetColumns.Count; i++)
         {
-            sequence.Join(unsolvedColumns[i].SetMagnetRaised(true, magnetLiftOffset, magnetLiftDuration));
+            sequence.Join(magnetColumns[i].SetMagnetRaised(true, magnetLiftOffset, magnetLiftDuration));
         }
 
         sequence.OnComplete(() =>
@@ -859,8 +861,8 @@ public class BoardGameplay : MonoBehaviour
 
     private void ApplyMagnetSelection(ColumnView selectedColumn, BlockView selectedBlock)
     {
-        List<ColumnView> unsolvedColumns = GetUnsolvedColumns(null);
-        List<ColumnView> shuffleColumns = GetUnsolvedColumns(selectedColumn);
+        List<ColumnView> unsolvedColumns = GetMagnetAvailableColumns(null);
+        List<ColumnView> shuffleColumns = GetMagnetAvailableColumns(selectedColumn);
         List<BlockView> boardBlocks = CollectBlocks(unsolvedColumns);
         List<BlockView> availableBlocks = new List<BlockView>(boardBlocks);
         if (trayBlock != null && trayBlock.ColorId == selectedBlock.ColorId)
@@ -930,13 +932,27 @@ public class BoardGameplay : MonoBehaviour
             sequence.Append(MoveBlockToTrayAnimated(replacementTrayBlock, magnetFillDuration));
         }
 
+        BlockColorId magnetColor = selectedBlock.ColorId;
+        magnetCoverBurnTargets.Clear();
+        for (int i = 0; i < selectedColumnBlocks.Count; i++)
+        {
+            if (selectedColumnBlocks[i] != null && selectedColumnBlocks[i].ColorId == magnetColor)
+            {
+                magnetCoverBurnTargets.Add(selectedColumnBlocks[i]);
+            }
+        }
+
+        suppressBottomCoverBurn = true;
         sequence.Append(selectedColumn.ReplaceBlocksAnimated(selectedColumnBlocks, magnetFillDuration));
+        sequence.AppendCallback(BurnMagnetCoverTargets);
         sequence.AppendCallback(RefreshLockedColumns);
         sequence.Append(BuildApplyShuffledLayoutSequence(shuffledLayout));
         sequence.OnComplete(() =>
         {
             isAnimating = false;
             RefreshLockedColumns();
+            suppressBottomCoverBurn = false;
+            magnetCoverBurnTargets.Clear();
             CheckWinLog();
             NotifyGameplayPanelChanged();
         });
@@ -948,7 +964,7 @@ public class BoardGameplay : MonoBehaviour
         isAnimating = true;
         HideMagnetOverlay();
 
-        List<ColumnView> unsolvedColumns = GetUnsolvedColumns(null);
+        List<ColumnView> unsolvedColumns = GetMagnetAvailableColumns(null);
         Sequence sequence = DOTween.Sequence();
         for (int i = 0; i < unsolvedColumns.Count; i++)
         {
@@ -1192,6 +1208,23 @@ public class BoardGameplay : MonoBehaviour
         return unsolvedColumns;
     }
 
+    private List<ColumnView> GetMagnetAvailableColumns(ColumnView excludedColumn)
+    {
+        List<ColumnView> availableColumns = new List<ColumnView>();
+
+        for (int i = 0; i < columns.Count; i++)
+        {
+            if (columns[i] == excludedColumn || columns[i].IsSolved() || columns[i].IsFreezeLocked)
+            {
+                continue;
+            }
+
+            availableColumns.Add(columns[i]);
+        }
+
+        return availableColumns;
+    }
+
     private ColumnView GetColumnContainingBlock(BlockView block)
     {
         for (int i = 0; i < columns.Count; i++)
@@ -1349,12 +1382,23 @@ public class BoardGameplay : MonoBehaviour
         BlockView bottomBlock = blocks.Count > 0 ? blocks[blocks.Count - 1] : null;
         BlockView previousBottomBlock = bottomBlockStates[columnIndex];
 
-        if (solvedColumnStatesInitialized && bottomBlock != null && bottomBlock != previousBottomBlock)
+        if (!suppressBottomCoverBurn && solvedColumnStatesInitialized && bottomBlock != null && bottomBlock != previousBottomBlock)
         {
             bottomBlock.BurnCoverTopToBottom();
         }
 
         bottomBlockStates[columnIndex] = bottomBlock;
+    }
+
+    private void BurnMagnetCoverTargets()
+    {
+        foreach (BlockView block in magnetCoverBurnTargets)
+        {
+            if (block != null)
+            {
+                block.BurnCoverTopToBottom();
+            }
+        }
     }
 
     private void PlayColumnSolvedWave(ColumnView column)

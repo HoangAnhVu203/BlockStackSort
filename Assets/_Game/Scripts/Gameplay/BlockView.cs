@@ -26,6 +26,7 @@ public class BlockView : MonoBehaviour
     private bool isCoverBurning;
     private bool hasCapturedCoverStart;
     private readonly List<SpriteRenderer> freezeLayers = new List<SpriteRenderer>();
+    private readonly List<int> freezeLayerSortingOffsets = new List<int>();
     private SkeletonAnimation skeletonAnimation;
 
     public void SetColorId(BlockColorId newColorId)
@@ -201,8 +202,8 @@ public class BlockView : MonoBehaviour
             return;
         }
 
-        activeLayerCount = Mathf.Clamp(activeLayerCount, 0, freezeLayers.Count);
-        int hiddenLayerCount = freezeLayers.Count - activeLayerCount;
+        activeLayerCount = Mathf.Clamp(activeLayerCount, 0, MaxFreezeLayerCount);
+        int hiddenLayerCount = MaxFreezeLayerCount - activeLayerCount;
         for (int i = 0; i < freezeLayers.Count; i++)
         {
             SpriteRenderer layer = freezeLayers[i];
@@ -215,7 +216,7 @@ public class BlockView : MonoBehaviour
             Color color = layer.color;
             color.a = 1f;
             layer.color = color;
-            layer.gameObject.SetActive(i >= hiddenLayerCount);
+            layer.gameObject.SetActive(GetFreezeLayerVisibilityOrder(layer) > hiddenLayerCount);
         }
 
         SyncFreezeSortingOrder();
@@ -233,8 +234,7 @@ public class BlockView : MonoBehaviour
                     continue;
                 }
 
-                string childName = spriteRenderers[i].name.ToLowerInvariant();
-                if (childName.Contains("cover") || childName.Contains("overlay"))
+                if (IsCoverRendererCandidate(spriteRenderers[i]))
                 {
                     coverRenderer = spriteRenderers[i];
                     break;
@@ -262,6 +262,22 @@ public class BlockView : MonoBehaviour
             coverStartColor = coverRenderer.color;
             hasCapturedCoverStart = true;
         }
+    }
+
+    private bool IsCoverRendererCandidate(SpriteRenderer renderer)
+    {
+        if (renderer == null)
+        {
+            return false;
+        }
+
+        string childName = renderer.name.ToLowerInvariant();
+        if (childName.Contains("freeze") || childName.Contains("ice"))
+        {
+            return false;
+        }
+
+        return childName.Contains("cover") || childName.Contains("overlay");
     }
 
     private bool TryGetVisualBounds(out Bounds visualBounds)
@@ -354,6 +370,7 @@ public class BlockView : MonoBehaviour
         }
 
         SpriteRenderer[] spriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);
+        int baseSortingOrder = GetBaseSortingOrder();
         for (int i = 0; i < spriteRenderers.Length; i++)
         {
             if (spriteRenderers[i].transform == transform)
@@ -365,10 +382,10 @@ public class BlockView : MonoBehaviour
             if (childName.Contains("freeze") || childName.Contains("ice"))
             {
                 freezeLayers.Add(spriteRenderers[i]);
+                freezeLayerSortingOffsets.Add(spriteRenderers[i].sortingOrder - baseSortingOrder);
             }
         }
 
-        freezeLayers.Sort((a, b) => GetFreezeLayerOrder(a).CompareTo(GetFreezeLayerOrder(b)));
         freezeRenderer = freezeLayers.Count > 0 ? freezeLayers[freezeLayers.Count - 1] : null;
     }
 
@@ -380,12 +397,18 @@ public class BlockView : MonoBehaviour
             return;
         }
 
-        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-        if (spriteRenderer == null)
+        if (!TryGetBlockVisualSorting(out int sortingLayerId, out int sortingOrder))
         {
             return;
         }
 
+        int minOffset = freezeLayerSortingOffsets.Count > 0 ? freezeLayerSortingOffsets[0] : 2;
+        for (int i = 1; i < freezeLayerSortingOffsets.Count; i++)
+        {
+            minOffset = Mathf.Min(minOffset, freezeLayerSortingOffsets[i]);
+        }
+
+        int liftOffset = Mathf.Max(0, 2 - minOffset);
         for (int i = 0; i < freezeLayers.Count; i++)
         {
             if (freezeLayers[i] == null)
@@ -393,12 +416,60 @@ public class BlockView : MonoBehaviour
                 continue;
             }
 
-            freezeLayers[i].sortingLayerID = spriteRenderer.sortingLayerID;
-            freezeLayers[i].sortingOrder = spriteRenderer.sortingOrder + 2 + (freezeLayers.Count - 1 - i);
+            freezeLayers[i].sortingLayerID = sortingLayerId;
+            int sortingOffset = i < freezeLayerSortingOffsets.Count ? freezeLayerSortingOffsets[i] : i + 2;
+            freezeLayers[i].sortingOrder = sortingOrder + sortingOffset + liftOffset;
         }
     }
 
-    private int GetFreezeLayerOrder(SpriteRenderer layer)
+    private bool TryGetBlockVisualSorting(out int sortingLayerId, out int sortingOrder)
+    {
+        sortingLayerId = 0;
+        sortingOrder = 0;
+        bool found = false;
+
+        Renderer[] renderers = GetComponentsInChildren<Renderer>(false);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Renderer renderer = renderers[i];
+            if (renderer == null || !ShouldUseRendererForVisualCenter(renderer))
+            {
+                continue;
+            }
+
+            if (!found || renderer.sortingOrder > sortingOrder)
+            {
+                sortingLayerId = renderer.sortingLayerID;
+                sortingOrder = renderer.sortingOrder;
+                found = true;
+            }
+        }
+
+        if (found)
+        {
+            return true;
+        }
+
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            sortingLayerId = spriteRenderer.sortingLayerID;
+            sortingOrder = spriteRenderer.sortingOrder;
+            return true;
+        }
+
+        MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+        if (meshRenderer != null)
+        {
+            sortingLayerId = meshRenderer.sortingLayerID;
+            sortingOrder = meshRenderer.sortingOrder;
+            return true;
+        }
+
+        return false;
+    }
+
+    private int GetFreezeLayerVisibilityOrder(SpriteRenderer layer)
     {
         string layerName = layer != null ? layer.name.ToLowerInvariant() : string.Empty;
         if (layerName.Contains("freeze1") || layerName.Contains("ice1"))
@@ -414,8 +485,26 @@ public class BlockView : MonoBehaviour
         return 3;
     }
 
+    private int GetBaseSortingOrder()
+    {
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            return spriteRenderer.sortingOrder;
+        }
+
+        MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+        if (meshRenderer != null)
+        {
+            return meshRenderer.sortingOrder;
+        }
+
+        return 0;
+    }
+
     private void SyncCoverSortingOrder()
     {
+        ResolveCoverRenderer();
         if (coverRenderer == null)
         {
             return;
@@ -426,6 +515,15 @@ public class BlockView : MonoBehaviour
         {
             coverRenderer.sortingLayerID = spriteRenderer.sortingLayerID;
             coverRenderer.sortingOrder = spriteRenderer.sortingOrder + 1;
+            SyncCoverBurnMaskSorting();
+            return;
+        }
+
+        MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+        if (meshRenderer != null)
+        {
+            coverRenderer.sortingLayerID = meshRenderer.sortingLayerID;
+            coverRenderer.sortingOrder = meshRenderer.sortingOrder + 1;
         }
 
         SyncCoverBurnMaskSorting();

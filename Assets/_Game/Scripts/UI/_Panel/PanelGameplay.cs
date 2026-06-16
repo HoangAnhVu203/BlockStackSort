@@ -4,9 +4,9 @@ using DG.Tweening;
 
 public class PanelGameplay : UICanvas
 {
-    private const string RollBackFreeUsedKey = "BlockStackSort.ItemFreeUsed.RollBack";
-    private const string ShuffleFreeUsedKey = "BlockStackSort.ItemFreeUsed.Shuffle";
-    private const string MagnetFreeUsedKey = "BlockStackSort.ItemFreeUsed.Magnet";
+    private const string RollBackFreeUsesKey = "BlockStackSort.ItemFreeUses.RollBack";
+    private const string ShuffleFreeUsesKey = "BlockStackSort.ItemFreeUses.Shuffle";
+    private const string MagnetFreeUsesKey = "BlockStackSort.ItemFreeUses.Magnet";
     private const int AskBuyItemCoinCost = 500;
 
     [SerializeField] private Button rollBackBlockBtn;
@@ -14,6 +14,7 @@ public class PanelGameplay : UICanvas
     [SerializeField] private Button magnetBlockBtn;
 
     [Header("Item Uses")]
+    [SerializeField]
     private int startingFreeItemUses = 30;
     [SerializeField] private Text rollBackItemText;
     [SerializeField] private Text shuffleItemText;
@@ -379,15 +380,15 @@ public class PanelGameplay : UICanvas
 
     private void ResetItemUses()
     {
-        rollBackItemUses = GetInitialItemUses(RollBackFreeUsedKey);
-        shuffleItemUses = GetInitialItemUses(ShuffleFreeUsedKey);
-        magnetItemUses = GetInitialItemUses(MagnetFreeUsedKey);
+        rollBackItemUses = GetInitialItemUses(RollBackFreeUsesKey);
+        shuffleItemUses = GetInitialItemUses(ShuffleFreeUsesKey);
+        magnetItemUses = GetInitialItemUses(MagnetFreeUsesKey);
     }
 
-    private int GetInitialItemUses(string freeUsedKey)
+    private int GetInitialItemUses(string freeUsesKey)
     {
-        bool hasUsedFree = PlayerPrefs.GetInt(freeUsedKey, 0) == 1;
-        return hasUsedFree ? 0 : Mathf.Max(0, startingFreeItemUses);
+        int defaultUses = Mathf.Max(0, startingFreeItemUses);
+        return Mathf.Max(0, PlayerPrefs.GetInt(freeUsesKey, defaultUses));
     }
 
     private void RefreshItemUseTexts()
@@ -414,16 +415,13 @@ public class PanelGameplay : UICanvas
         return GetAvailableItemUses(itemType, freeUses) > 0;
     }
 
-    private void ConsumeItemUse(ShopItemType itemType, ref int uses, string freeUsedKey)
+    private void ConsumeItemUse(ShopItemType itemType, ref int uses, string freeUsesKey)
     {
         if (uses > 0)
         {
             uses = Mathf.Max(0, uses - 1);
-            if (PlayerPrefs.GetInt(freeUsedKey, 0) == 0)
-            {
-                PlayerPrefs.SetInt(freeUsedKey, 1);
-                PlayerPrefs.Save();
-            }
+            PlayerPrefs.SetInt(freeUsesKey, uses);
+            PlayerPrefs.Save();
         }
         else if (ShopManager.Instance != null)
         {
@@ -585,7 +583,7 @@ public class PanelGameplay : UICanvas
 
         if (TryUseRollBackItem())
         {
-            ConsumeItemUse(ShopItemType.RollBack, ref rollBackItemUses, RollBackFreeUsedKey);
+            ConsumeItemUse(ShopItemType.RollBack, ref rollBackItemUses, RollBackFreeUsesKey);
         }
     }
 
@@ -600,7 +598,7 @@ public class PanelGameplay : UICanvas
 
         if (TryUseShuffleItem())
         {
-            ConsumeItemUse(ShopItemType.Shuffle, ref shuffleItemUses, ShuffleFreeUsedKey);
+            ConsumeItemUse(ShopItemType.Shuffle, ref shuffleItemUses, ShuffleFreeUsesKey);
         }
     }
 
@@ -615,7 +613,7 @@ public class PanelGameplay : UICanvas
 
         if (TryUseMagnetItem())
         {
-            ConsumeItemUse(ShopItemType.Magnet, ref magnetItemUses, MagnetFreeUsedKey);
+            ConsumeItemUse(ShopItemType.Magnet, ref magnetItemUses, MagnetFreeUsesKey);
         }
     }
 
