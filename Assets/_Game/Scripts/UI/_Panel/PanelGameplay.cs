@@ -311,7 +311,7 @@ public class PanelGameplay : UICanvas
         }
 
         int remainingMoves = boardGameplay != null ? boardGameplay.RemainingMoves : 0;
-        SetText(levelText, levelNumber.ToString());
+        SetText(levelText, $"Level {levelNumber}");
         SetText(moveText, remainingMoves.ToString());
     }
 

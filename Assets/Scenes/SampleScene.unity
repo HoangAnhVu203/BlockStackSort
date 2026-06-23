@@ -1274,7 +1274,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 603b2a2fdb3704553ad5c5bcecf2f030, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  firstLoadingDuration: 4.5
+  firstLoadingDuration: 3
   winParticles:
   - {fileID: 177452931}
   - {fileID: 1957067991}

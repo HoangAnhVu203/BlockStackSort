@@ -44,7 +44,8 @@ public sealed class GameManager : Singleton<GameManager>
             loadingCoroutine = null;
         }
 
-        ChangeState(GameState.Home);
+        ChangeState(GameState.Loading);
+        loadingCoroutine = StartCoroutine(ShowHomeAfterLoading());
     }
 
     public void PlayCurrentLevel()
@@ -167,7 +168,7 @@ public sealed class GameManager : Singleton<GameManager>
             var panelLoading = UIManager.Instance.GetUI<PanelLoading>();
             panelLoading.SetMinimumVisibleDuration(firstLoadingDuration);
             loadingDuration = panelLoading.AnimationDuration;
-            yield return new WaitForSecondsRealtime(loadingDuration);
+            panelLoading.PlayLoading(loadingDuration);
 
             while (panelLoading != null && panelLoading.IsAnimating)
             {
